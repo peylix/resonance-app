@@ -59,7 +59,7 @@ export function searchCities(query: string): CityData[] {
 
     const lowerQuery = query.toLowerCase().trim();
 
-    return CITY_DATA.filter(city => {
+    return CITY_DATA.filter(city =>
         // match the city names
         city.name.toLowerCase().includes(lowerQuery) ||
 
@@ -68,7 +68,7 @@ export function searchCities(query: string): CityData[] {
 
         // match the search terms
         city.searchTerms?.some(term => term.includes(lowerQuery))
-    });
+    );
 }
 
 /**
