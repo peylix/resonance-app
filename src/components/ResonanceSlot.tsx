@@ -39,17 +39,22 @@ export function ResonanceSlot() {
         const slots: TimeSlot[] = [];
         const { currentTime } = timeState;
 
+        // Get the base date in reference timezone at start of day
+        // This serves as the anchor point for hour calculations
+        const baseDate = startOfDay(toZonedTime(currentTime, referenceTimezone));
+
         // Iterate through 24 hours
         for (let hour = 0; hour < 24; hour++) {
             const freeTimezones: string[] = [];
             const sleepingTimezones: string[] = [];
             let workingCount = 0;
 
+            // Calculate the absolute time for this hour in reference timezone
+            const timeAtHour = addHours(baseDate, hour);
+
             // Check each timezone at this hour
             timezones.forEach(tz => {
-                // Get the hour in this timezone
-                const baseDate = startOfDay(toZonedTime(currentTime, referenceTimezone));
-                const timeAtHour = addHours(baseDate, hour);
+                // Convert this absolute moment to the target timezone's hour
                 const tzHour = new Date(
                     timeAtHour.toLocaleString('en-US', { timeZone: tz.timezone })
                 ).getHours();

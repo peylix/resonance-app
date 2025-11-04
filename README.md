@@ -1,4 +1,4 @@
-# resonance-app
+# 🕰️ Resonance
 Coordinate across time zones effortlessly and resonate with others.
 
 ## Tech Stack
