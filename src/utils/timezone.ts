@@ -1,4 +1,4 @@
-import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
+import { toZonedTime, formatInTimeZone, fromZonedTime } from 'date-fns-tz';
 import { differenceInMinutes, addMinutes, startOfDay } from 'date-fns';
 
 /**
@@ -189,8 +189,10 @@ export function getTimeFromPercentage(
 ): Date {
     const totalMinutes = (percentage / 100) * 24 * 60;
     const dayStart = startOfDay(toZonedTime(baseDate, timezone));
+    const localTime = addMinutes(dayStart, totalMinutes);
 
-    return addMinutes(dayStart, totalMinutes);
+    // Convert the local time back to UTC to ensure correct global time representation
+    return fromZonedTime(localTime, timezone);
 }
 
 /**

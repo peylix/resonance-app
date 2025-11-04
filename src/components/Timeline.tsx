@@ -20,9 +20,12 @@ export function Timeline({ timezone }: TimelineProps) {
 
     const timelineRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [dragPercentage, setDragPercentage] = useState<number | null>(null);
 
     // get the percentage of the current time in the day for the given timezone
-    const percentage = getTimePercentage(timeState.currentTime, timezone.timezone);
+    // use dragPercentage when dragging to avoid precision loss from time conversion
+    const calculatedPercentage = getTimePercentage(timeState.currentTime, timezone.timezone);
+    const percentage = isDragging && dragPercentage !== null ? dragPercentage : calculatedPercentage;
 
     // handle dragging start event
     const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
@@ -41,6 +44,9 @@ export function Timeline({ timezone }: TimelineProps) {
         const x = clientX - rect.left;
         const newPercentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
 
+        // update drag percentage for immediate visual feedback
+        setDragPercentage(newPercentage);
+
         const newTime = getTimeFromPercentage(newPercentage, timeState.currentTime, timezone.timezone);
         setCurrentTime(newTime);
     };
@@ -48,6 +54,7 @@ export function Timeline({ timezone }: TimelineProps) {
     // handle dragging end event
     const handleDragEnd = () => {
         setIsDragging(false);
+        setDragPercentage(null);
     };
 
     useEffect(() => {
