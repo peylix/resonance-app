@@ -133,15 +133,24 @@ export function isReasonableHours(
 
 /**
  * Get the type for every hours in a day cycle (24 hrs)
+ * @param workStart - work start hour (default 9)
+ * @param workEnd - work end hour (default 18)
+ * @param sleepStart - sleep start hour (default 0)
+ * @param sleepEnd - sleep end hour (default 7)
  * @returns an array of 24 elements indicating the type of each hour
  */
-export function getHourTypes(): ('working' | 'sleeping' | 'free')[] {
+export function getHourTypes(
+    workStart: number = 9,
+    workEnd: number = 18,
+    sleepStart: number = 0,
+    sleepEnd: number = 7
+): ('working' | 'sleeping' | 'free')[] {
     const types: ('working' | 'sleeping' | 'free')[] = [];
 
     for (let hour = 0; hour < 24; hour++) {
-        if (isWorkingHours(hour)) {
+        if (isWorkingHours(hour, workStart, workEnd)) {
             types.push('working');
-        } else if (isSleepHours(hour)) {
+        } else if (isSleepHours(hour, sleepStart, sleepEnd)) {
             types.push('sleeping');
         } else {
             types.push('free');
