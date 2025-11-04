@@ -113,7 +113,12 @@ export function isSleepHours(
     sleepStart: number = 0,
     sleepEnd: number = 7
 ): boolean {
-    return hour >= sleepStart && hour < sleepEnd || hour >= 23;
+    // Handle wrap-around case (e.g., 23-7)
+    if (sleepStart > sleepEnd) {
+        return hour >= sleepStart || hour < sleepEnd;
+    }
+    // Handle normal case (e.g., 1-9)
+    return hour >= sleepStart && hour < sleepEnd;
 }
 
 /**
