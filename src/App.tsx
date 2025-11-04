@@ -27,10 +27,12 @@ export function App() {
           {/* header */}
           <header className="mb-8">
             <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-gray-900">
+              共鸣钟
+              <br />
               Resonance
             </h1>
             <p className="text-gray-600 text-sm lg:text-base">
-              Coordinate time across timezones effortlessly
+              Coordinate time across timezones and resonate together.
             </p>
           </header>
 
