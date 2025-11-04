@@ -20,7 +20,8 @@ export function ResonanceSlot() {
         workStart,
         workEnd,
         sleepStart,
-        sleepEnd
+        sleepEnd,
+        setCurrentTime
     } = useTimezoneStore();
 
     // If no timezones added, show placeholder
@@ -143,6 +144,19 @@ export function ResonanceSlot() {
         return `${hour.toString().padStart(2, '0')}:00`;
     };
 
+    // Handle clicking on a time slot to set the time
+    const handleSlotClick = (hour: number) => {
+        const { currentTime } = timeState;
+
+        // Get the base date in reference timezone at start of day
+        const baseDate = startOfDay(toZonedTime(currentTime, referenceTimezone));
+
+        // Set the time to the clicked hour
+        const newTime = addHours(baseDate, hour);
+
+        setCurrentTime(newTime);
+    };
+
     return (
         <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 border border-gray-200">
             <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
@@ -186,8 +200,9 @@ export function ResonanceSlot() {
                     {timeSlots.map((slot) => (
                         <div
                             key={slot.hour}
+                            onClick={() => handleSlotClick(slot.hour)}
                             className={`h-8 ${getSlotColor(slot.status)} relative group cursor-pointer transition-all hover:scale-110`}
-                            title={`${formatHour(slot.hour)} - ${slot.workingCount}/${timezones.length} working`}
+                            title={`${formatHour(slot.hour)} - ${slot.workingCount}/${timezones.length} working - Click to set time`}
                         >
                             {/* Tooltip on hover */}
                             <div className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-10 w-48 bg-gray-900 text-white text-xs rounded py-2 px-3 shadow-lg">
