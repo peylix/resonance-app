@@ -2,6 +2,9 @@ import type { Timezone } from '../types/timezone';
 import { useTimezoneStore } from '../store/timezoneStore';
 import { formatTime, getDateLabel, getTimeDifference } from '../utils/timezone';
 import { isWorkingHours, isSleepHours } from '../utils/timezone';
+import { MdWork } from 'react-icons/md';
+import { IoMdMoon } from 'react-icons/io';
+import { FaStar } from 'react-icons/fa';
 
 
 interface TimezoneCardProps {
@@ -37,12 +40,24 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
 
     const getTimeLabel = () => {
         if (isWorkingHours(hour, workStart, workEnd)) {
-            return '💼 Working';
+            return (
+                <span className="flex items-center gap-1">
+                    <MdWork /> Working
+                </span>
+            );
         }
         if (isSleepHours(hour, sleepStart, sleepEnd)) {
-            return '😴 Sleeping';
+            return (
+                <span className="flex items-center gap-1">
+                    <IoMdMoon /> Sleeping
+                </span>
+            );
         }
-        return '🌟 Free';
+        return (
+            <span className="flex items-center gap-1">
+                <FaStar /> Free
+            </span>
+        );
     };
 
     return (

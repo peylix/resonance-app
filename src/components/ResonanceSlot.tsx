@@ -2,6 +2,7 @@ import { useTimezoneStore } from "../store/timezoneStore";
 import { isWorkingHours, isSleepHours } from "../utils/timezone";
 import { toZonedTime } from "date-fns-tz";
 import { addHours, startOfDay } from "date-fns";
+import { FcIdea } from "react-icons/fc";
 
 interface TimeSlot {
     hour: number; // Hour in reference timezone (0-23)
@@ -26,7 +27,9 @@ export function ResonanceSlot() {
     if (timezones.length === 0) {
         return (
             <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 border border-gray-200">
-                <h2 className="text-xl font-bold mb-2 text-gray-900">✨ Resonance Slots</h2>
+                <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                    <FcIdea /> Resonance Slots
+                </h2>
                 <p className="text-sm text-gray-600">
                     Add timezones to see when everyone can work together
                 </p>
@@ -142,7 +145,9 @@ export function ResonanceSlot() {
 
     return (
         <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 border border-gray-200">
-            <h2 className="text-xl font-bold mb-4 text-gray-900">Resonance Slots</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                <FcIdea /> Resonance Slots
+            </h2>
 
             {/* Resonance Ranges Summary */}
             {resonanceRanges.length > 0 ? (

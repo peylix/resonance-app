@@ -1,6 +1,10 @@
 import { useTimezoneStore } from "../store/timezoneStore";
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { FaPlay, FaPause } from "react-icons/fa6";
+import { IoSettingsSharp } from "react-icons/io5";
+import { MdWork } from 'react-icons/md';
+import { IoMdMoon } from 'react-icons/io';
 
 export function ControlPanel() {
     const {
@@ -45,7 +49,7 @@ export function ControlPanel() {
                         : 'bg-gray-600 text-gray-100 hover:bg-gray-700'
                     }`}
             >
-                {timeState.isLive ? '🔴 Live' : '⏸ Paused'}
+                {timeState.isLive ? <FaPlay size={20}/> : <FaPause size={20}/>}
             </button>
 
             {/* Settings button */}
@@ -54,7 +58,7 @@ export function ControlPanel() {
                 className="px-4 py-2 rounded-lg font-semibold bg-blue-200
   text-gray-700 hover:bg-blue-300 transition-all"
             >
-                ⚙ Settings
+                <IoSettingsSharp size={20} />
             </button>
 
             {/* Current time display */}
@@ -80,7 +84,9 @@ export function ControlPanel() {
 
                         {/* Work time setting */}
                         <div className="mb-6">
-                            <h3 className="text-lg font-semibold mb-2 text-green-600">💼 Working Hours</h3>
+                            <h3 className="text-lg font-semibold mb-2 text-green-600 flex items-center gap-2">
+                                <MdWork /> Working Hours
+                            </h3>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1">
                                     <label className="block text-sm text-gray-600 mb-1">Start</label>
@@ -112,7 +118,9 @@ export function ControlPanel() {
 
                         {/* Sleep time setting */}
                         <div className="mb-6">
-                            <h3 className="text-lg font-semibold mb-2 text-blue-600">😴 Sleep Hours</h3>
+                            <h3 className="text-lg font-semibold mb-2 text-blue-600 flex items-center gap-2">
+                                <IoMdMoon /> Sleep Hours
+                            </h3>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1">
                                     <label className="block text-sm text-gray-600 mb-1">Start</label>

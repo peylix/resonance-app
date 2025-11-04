@@ -1,13 +1,16 @@
 import { useTimezoneStore } from '../store/timezoneStore';
 import { TimezoneCardWithTimeline } from './TimezoneCardWithTimeline';
+import { FcGlobe } from "react-icons/fc";
 
 export function TimezoneList() {
     const {timezones} = useTimezoneStore();
 
     if (timezones.length === 0) {
         return (
-        <div className="text-center py-12 text-gray-400">
-            <div className="text-6xl mb-4">🌍</div>
+        <div className="flex flex-col items-center py-12 text-gray-400">
+            <div className="text-6xl mb-4">
+                    <FcGlobe size={64} />
+            </div>
             <p className="text-xl">No cities added yet.</p>
             <p className="text-sm mt-2"> Use the search above to add cities to your list.</p>
         </div>
