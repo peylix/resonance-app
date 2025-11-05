@@ -98,6 +98,9 @@ export function isWorkingHours(
     workStart: number = 9,
     workEnd: number = 18
 ): boolean {
+    if (workStart > workEnd) {
+        return hour >= workStart || hour < workEnd;
+    }
     return hour >= workStart && hour < workEnd;
 }
 
@@ -118,21 +121,6 @@ export function isSleepHours(
         return hour >= sleepStart || hour < sleepEnd;
     }
     // Handle normal case (e.g., 1-9)
-    return hour >= sleepStart && hour < sleepEnd;
-}
-
-/**
- * determine if a given hour is a reasonable time (9:00 - 22:00 by default)
- * @param hour - how many hours (0-23)
- * @param sleepStart - sleep start hour (default 0)
- * @param sleepEnd - sleep end hour (default 7)
- * @returns whether it is a reasonable time
- */
-export function isReasonableHours(
-    hour: number,
-    sleepStart: number = 9,
-    sleepEnd: number = 22
-): boolean {
     return hour >= sleepStart && hour < sleepEnd;
 }
 
