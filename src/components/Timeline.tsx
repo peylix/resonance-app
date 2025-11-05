@@ -89,11 +89,11 @@ export function Timeline({ timezone }: TimelineProps) {
             case 'working':
                 return 'bg-green-500/30';
             case 'sleeping':
-                return 'bg-blue-500/30';
+                return 'bg-red-500/30';
             case 'free':
                 return 'bg-yellow-500/30';
             default:
-                return '';
+                return 'bg=gray-500/30';
 
         }
     };
