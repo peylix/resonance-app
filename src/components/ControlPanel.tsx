@@ -24,8 +24,33 @@ export function ControlPanel() {
     const [tempWorkEnd, setTempWorkEnd] = useState(workEnd);
     const [tempSleepStart, setTempSleepStart] = useState(sleepStart);
     const [tempSleepEnd, setTempSleepEnd] = useState(sleepEnd);
+    const [validationError, setValidationError] = useState<string>('');
 
     const handleSaveSettings = () => {
+        // Clear previous errors
+        setValidationError('');
+
+        const values = [tempWorkStart, tempWorkEnd, tempSleepStart, tempSleepEnd];
+
+        // Validate that values are valid numbers
+        if (values.some(isNaN)) {
+            setValidationError('All time values must be filled');
+            return;
+        }
+
+        // Validate that values are in valid range (0-23)
+        if (values.some(v => v < 0 || v > 23)) {
+            setValidationError('All time values must be between 0 and 23');
+            return;
+        }
+
+        // Validate that work/sleep start/end times are not the same
+        if (tempWorkStart === tempWorkEnd || tempSleepStart === tempSleepEnd) {
+            setValidationError('Start and end times cannot be the same');
+            return;
+        }
+
+        // If all validations passed
         setWorkingHours(tempWorkStart, tempWorkEnd);
         setSleepHours(tempSleepStart, tempSleepEnd);
         setShowSettings(false);
@@ -36,6 +61,7 @@ export function ControlPanel() {
         setTempWorkEnd(workEnd);
         setTempSleepStart(sleepStart);
         setTempSleepEnd(sleepEnd);
+        setValidationError('');
         setShowSettings(false);
     };
 
@@ -149,6 +175,13 @@ export function ControlPanel() {
                                 {tempSleepStart}:00 - {tempSleepEnd}:00
                             </p>
                         </div>
+
+                        {/* Validation error message */}
+                        {validationError && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <p className="text-sm text-red-600">{validationError}</p>
+                            </div>
+                        )}
 
                         {/* Action buttons */}
                         <div className="flex gap-3">
