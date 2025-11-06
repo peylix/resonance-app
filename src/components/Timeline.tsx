@@ -8,15 +8,13 @@ interface TimelineProps {
 }
 
 export function Timeline({ timezone }: TimelineProps) {
-    const {
-        timeState,
-        setCurrentTime,
-        setLiveMode,
-        activeStart,
-        activeEnd,
-        sleepStart,
-        sleepEnd
-    } = useTimezoneStore();
+    const currentTime = useTimezoneStore((state) => state.timeState.currentTime);
+    const setCurrentTime = useTimezoneStore((state) => state.setCurrentTime);
+    const setLiveMode = useTimezoneStore((state) => state.setLiveMode);
+    const activeStart = useTimezoneStore((state) => state.activeStart);
+    const activeEnd = useTimezoneStore((state) => state.activeEnd);
+    const sleepStart = useTimezoneStore((state) => state.sleepStart);
+    const sleepEnd = useTimezoneStore((state) => state.sleepEnd);
 
     const timelineRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -24,7 +22,7 @@ export function Timeline({ timezone }: TimelineProps) {
 
     // get the percentage of the current time in the day for the given timezone
     // use dragPercentage when dragging to avoid precision loss from time conversion
-    const calculatedPercentage = getTimePercentage(timeState.currentTime, timezone.timezone);
+    const calculatedPercentage = getTimePercentage(currentTime, timezone.timezone);
     const percentage = isDragging && dragPercentage !== null ? dragPercentage : calculatedPercentage;
 
     // handle dragging start event
@@ -47,7 +45,7 @@ export function Timeline({ timezone }: TimelineProps) {
         // update drag percentage for immediate visual feedback
         setDragPercentage(newPercentage);
 
-        const newTime = getTimeFromPercentage(newPercentage, timeState.currentTime, timezone.timezone);
+        const newTime = getTimeFromPercentage(newPercentage, currentTime, timezone.timezone);
         setCurrentTime(newTime);
     };
 

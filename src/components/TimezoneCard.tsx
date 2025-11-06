@@ -11,16 +11,13 @@ interface TimezoneCardProps {
 }
 
 export function TimezoneCard({ timezone }: TimezoneCardProps) {
-    const {
-        timeState,
-        referenceTimezone,
-        removeTimezone,
-        activeStart,
-        activeEnd,
-        sleepStart,
-        sleepEnd
-    } = useTimezoneStore();
-    const { currentTime } = timeState;
+    const currentTime = useTimezoneStore((state) => state.timeState.currentTime);
+    const referenceTimezone = useTimezoneStore((state) => state.referenceTimezone);
+    const removeTimezone = useTimezoneStore((state) => state.removeTimezone);
+    const activeStart = useTimezoneStore((state) => state.activeStart);
+    const activeEnd = useTimezoneStore((state) => state.activeEnd);
+    const sleepStart = useTimezoneStore((state) => state.sleepStart);
+    const sleepEnd = useTimezoneStore((state) => state.sleepEnd);
     const { t } = useTranslation();
 
     const time = formatTime(currentTime, timezone.timezone);

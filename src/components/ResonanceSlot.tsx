@@ -14,16 +14,14 @@ interface TimeSlot {
 }
 
 export function ResonanceSlot() {
-    const {
-        timezones,
-        timeState,
-        referenceTimezone,
-        activeStart,
-        activeEnd,
-        sleepStart,
-        sleepEnd,
-        setCurrentTime
-    } = useTimezoneStore();
+    const timezones = useTimezoneStore((state) => state.timezones);
+    const currentTime = useTimezoneStore((state) => state.timeState.currentTime);
+    const referenceTimezone = useTimezoneStore((state) => state.referenceTimezone);
+    const activeStart = useTimezoneStore((state) => state.activeStart);
+    const activeEnd = useTimezoneStore((state) => state.activeEnd);
+    const sleepStart = useTimezoneStore((state) => state.sleepStart);
+    const sleepEnd = useTimezoneStore((state) => state.sleepEnd);
+    const setCurrentTime = useTimezoneStore((state) => state.setCurrentTime);
 
     const { t } = useTranslation();
 
@@ -44,7 +42,6 @@ export function ResonanceSlot() {
     // Calculate time slots for the current day
     const calculateResonanceSlots = (): TimeSlot[] => {
         const slots: TimeSlot[] = [];
-        const { currentTime } = timeState;
 
         // Get the base date in reference timezone at start of day
         // This serves as the anchor point for hour calculations
@@ -147,8 +144,6 @@ export function ResonanceSlot() {
 
     // Handle clicking on a time slot to set the time
     const handleSlotClick = (hour: number) => {
-        const { currentTime } = timeState;
-
         // Get the base date in reference timezone at start of day
         const baseDate = startOfDay(toZonedTime(currentTime, referenceTimezone));
 

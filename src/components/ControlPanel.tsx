@@ -7,18 +7,15 @@ import { useTranslation } from "../hooks/useTranslation";
 import { languages } from '../i18n/translations';
 
 export function ControlPanel() {
-    const {
-        timeState,
-        setLiveMode,
-        activeStart,
-        activeEnd,
-        sleepStart,
-        sleepEnd,
-        setActiveHours,
-        setSleepHours,
-        setLanguage
-
-    } = useTimezoneStore();
+    const isLive = useTimezoneStore((state) => state.timeState.isLive);
+    const setLiveMode = useTimezoneStore((state) => state.setLiveMode);
+    const activeStart = useTimezoneStore((state) => state.activeStart);
+    const activeEnd = useTimezoneStore((state) => state.activeEnd);
+    const sleepStart = useTimezoneStore((state) => state.sleepStart);
+    const sleepEnd = useTimezoneStore((state) => state.sleepEnd);
+    const setActiveHours = useTimezoneStore((state) => state.setActiveHours);
+    const setSleepHours = useTimezoneStore((state) => state.setSleepHours);
+    const setLanguage = useTimezoneStore((state) => state.setLanguage);
 
     const { t, language } = useTranslation();
 
@@ -81,13 +78,13 @@ export function ControlPanel() {
         <div className="flex flex-wrap items-center gap-4">
             {/* Live mode switch button */}
             <button
-                onClick={() => setLiveMode(!timeState.isLive)}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all ${timeState.isLive
+                onClick={() => setLiveMode(!isLive)}
+                className={`px-4 py-2 rounded-lg font-semibold transition-all ${isLive
                         ? 'bg-green-500 text-white shadow-lg shadow-green-500/50'
                         : 'bg-gray-600 text-gray-100 hover:bg-gray-700'
                     }`}
             >
-                {timeState.isLive ? <FaPlay size={20}/> : <FaPause size={20}/>}
+                {isLive ? <FaPlay size={20}/> : <FaPause size={20}/>}
             </button>
 
             {/* Settings button */}
