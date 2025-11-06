@@ -80,11 +80,11 @@ export function ControlPanel() {
             <button
                 onClick={() => setLiveMode(!isLive)}
                 className={`px-4 py-2 rounded-lg font-semibold transition-all ${isLive
-                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/50'
-                    : 'bg-gray-600 text-gray-100 hover:bg-gray-700'
+                    ? 'bg-gray-600 text-gray-100 hover:bg-gray-700'
+                    : 'bg-green-500 text-white shadow-lg shadow-green-500/50'
                     }`}
             >
-                {isLive ? <FaPlay size={20} /> : <FaPause size={20} />}
+                {isLive ? <FaPause size={20} /> : <FaPlay size={20} />}
             </button>
 
             {/* Settings button */}
