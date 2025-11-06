@@ -1,10 +1,8 @@
 import type { Timezone } from '../types/timezone';
 import { useTimezoneStore } from '../store/timezoneStore';
 import { formatTime, getDateLabel, getTimeDifference } from '../utils/timezone';
-import { isWorkingHours, isSleepHours } from '../utils/timezone';
-import { MdWork } from 'react-icons/md';
-import { IoMdMoon } from 'react-icons/io';
-import { FaStar } from 'react-icons/fa';
+import { isActiveHours, isSleepHours } from '../utils/timezone';
+import { FaSun, FaMoon, FaStar } from "react-icons/fa6";
 import { useTranslation } from '../hooks/useTranslation';
 
 
@@ -17,8 +15,8 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
         timeState,
         referenceTimezone,
         removeTimezone,
-        workStart,
-        workEnd,
+        activeStart,
+        activeEnd,
         sleepStart,
         sleepEnd
     } = useTimezoneStore();
@@ -31,8 +29,8 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
     const hour = new Date(currentTime.toLocaleString('en-US', { timeZone: timezone.timezone })).getHours();
 
     const getTimeColor = () => {
-        if (isWorkingHours(hour, workStart, workEnd)) {
-            return 'border-gray-900 bg-gray-50'; // working time
+        if (isActiveHours(hour, activeStart, activeEnd)) {
+            return 'border-gray-900 bg-gray-50'; // active time
         }
         if (isSleepHours(hour, sleepStart, sleepEnd)) {
             return 'border-gray-400 bg-gray-100'; // sleep time
@@ -41,17 +39,17 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
     };
 
     const getTimeLabel = () => {
-        if (isWorkingHours(hour, workStart, workEnd)) {
+        if (isActiveHours(hour, activeStart, activeEnd)) {
             return (
                 <span className="flex items-center gap-1">
-                    <MdWork /> {t('timezoneCardWorking')}
+                    <FaSun /> {t('timezoneCardActive')}
                 </span>
             );
         }
         if (isSleepHours(hour, sleepStart, sleepEnd)) {
             return (
                 <span className="flex items-center gap-1">
-                    <IoMdMoon /> {t('timezoneCardSleeping')}
+                    <FaMoon /> {t('timezoneCardSleeping')}
                 </span>
             );
         }

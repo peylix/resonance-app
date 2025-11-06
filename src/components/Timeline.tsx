@@ -12,8 +12,8 @@ export function Timeline({ timezone }: TimelineProps) {
         timeState,
         setCurrentTime,
         setLiveMode,
-        workStart,
-        workEnd,
+        activeStart,
+        activeEnd,
         sleepStart,
         sleepEnd
     } = useTimezoneStore();
@@ -82,11 +82,11 @@ export function Timeline({ timezone }: TimelineProps) {
     }, [isDragging]);
 
 
-    const hourTypes = getHourTypes(workStart, workEnd, sleepStart, sleepEnd);
+    const hourTypes = getHourTypes(activeStart, activeEnd, sleepStart, sleepEnd);
 
-    const getHourColor = (type: 'working' | 'sleeping' | 'free') => {
+    const getHourColor = (type: 'active' | 'sleeping' | 'free') => {
         switch (type) {
-            case 'working':
+            case 'active':
                 return 'bg-green-500/30';
             case 'sleeping':
                 return 'bg-red-500/30';

@@ -87,21 +87,21 @@ export function getTimeDifference(
 }
 
 /**
- * determine if a given hour is in worktime (9:00 - 18:00 by default)
+ * determine if a given hour is in active time (9:00 - 18:00 by default)
  * @param hour - how many hours (0-23)
- * @param workStart - work start hour (default 9)
- * @param workEnd - work end hour (default 18)
- * @returns whether it is work time
+ * @param activeStart - active start hour (default 9)
+ * @param activeEnd - active end hour (default 18)
+ * @returns whether it is active time
  */
-export function isWorkingHours(
+export function isActiveHours(
     hour: number,
-    workStart: number = 9,
-    workEnd: number = 18
+    activeStart: number = 9,
+    activeEnd: number = 18
 ): boolean {
-    if (workStart > workEnd) {
-        return hour >= workStart || hour < workEnd;
+    if (activeStart > activeEnd) {
+        return hour >= activeStart || hour < activeEnd;
     }
-    return hour >= workStart && hour < workEnd;
+    return hour >= activeStart && hour < activeEnd;
 }
 
 /**
@@ -126,23 +126,23 @@ export function isSleepHours(
 
 /**
  * Get the type for every hours in a day cycle (24 hrs)
- * @param workStart - work start hour (default 9)
- * @param workEnd - work end hour (default 18)
+ * @param activeStart - active start hour (default 9)
+ * @param activeEnd - active end hour (default 18)
  * @param sleepStart - sleep start hour (default 0)
  * @param sleepEnd - sleep end hour (default 7)
  * @returns an array of 24 elements indicating the type of each hour
  */
 export function getHourTypes(
-    workStart: number = 9,
-    workEnd: number = 18,
+    activeStart: number = 9,
+    activeEnd: number = 18,
     sleepStart: number = 0,
     sleepEnd: number = 7
-): ('working' | 'sleeping' | 'free')[] {
-    const types: ('working' | 'sleeping' | 'free')[] = [];
+): ('active' | 'sleeping' | 'free')[] {
+    const types: ('active' | 'sleeping' | 'free')[] = [];
 
     for (let hour = 0; hour < 24; hour++) {
-        if (isWorkingHours(hour, workStart, workEnd)) {
-            types.push('working');
+        if (isActiveHours(hour, activeStart, activeEnd)) {
+            types.push('active');
         } else if (isSleepHours(hour, sleepStart, sleepEnd)) {
             types.push('sleeping');
         } else {

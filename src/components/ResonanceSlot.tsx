@@ -1,5 +1,5 @@
 import { useTimezoneStore } from "../store/timezoneStore";
-import { isWorkingHours, isSleepHours } from "../utils/timezone";
+import { isActiveHours, isSleepHours } from "../utils/timezone";
 import { toZonedTime } from "date-fns-tz";
 import { addHours, startOfDay } from "date-fns";
 import { FcIdea } from "react-icons/fc";
@@ -7,10 +7,10 @@ import { useTranslation } from "../hooks/useTranslation";
 
 interface TimeSlot {
     hour: number; // Hour in reference timezone (0-23)
-    status: 'all-working' | 'some-free' | 'some-sleeping';
+    status: 'all-active' | 'some-free' | 'some-sleeping';
     freeTimezones: string[]; // Translation keys for cities in free time
     sleepingTimezones: string[]; // Translation keys for cities in sleeping time
-    workingCount: number; // Number of timezones in working hours
+    activeCount: number; // Number of timezones in active hours
 }
 
 export function ResonanceSlot() {
@@ -18,8 +18,8 @@ export function ResonanceSlot() {
         timezones,
         timeState,
         referenceTimezone,
-        workStart,
-        workEnd,
+        activeStart,
+        activeEnd,
         sleepStart,
         sleepEnd,
         setCurrentTime
@@ -54,7 +54,7 @@ export function ResonanceSlot() {
         for (let hour = 0; hour < 24; hour++) {
             const freeTimezones: string[] = [];
             const sleepingTimezones: string[] = [];
-            let workingCount = 0;
+            let activeCount = 0;
 
             // Calculate the absolute time for this hour in reference timezone
             const timeAtHour = addHours(baseDate, hour);
@@ -66,8 +66,8 @@ export function ResonanceSlot() {
                     timeAtHour.toLocaleString('en-US', { timeZone: tz.timezone })
                 ).getHours();
 
-                if (isWorkingHours(tzHour, workStart, workEnd)) {
-                    workingCount++;
+                if (isActiveHours(tzHour, activeStart, activeEnd)) {
+                    activeCount++;
                 } else if (isSleepHours(tzHour, sleepStart, sleepEnd)) {
                     sleepingTimezones.push(tz.cityKey);
                 } else {
@@ -77,8 +77,8 @@ export function ResonanceSlot() {
 
             // Determine status
             let status: TimeSlot['status'];
-            if (workingCount === timezones.length) {
-                status = 'all-working';
+            if (activeCount === timezones.length) {
+                status = 'all-active';
             } else if (sleepingTimezones.length > 0) {
                 status = 'some-sleeping';
             } else {
@@ -90,7 +90,7 @@ export function ResonanceSlot() {
                 status,
                 freeTimezones,
                 sleepingTimezones,
-                workingCount
+                activeCount
             });
         }
 
@@ -99,13 +99,13 @@ export function ResonanceSlot() {
 
     const timeSlots = calculateResonanceSlots();
 
-    // Find continuous resonance slots (all working)
+    // Find continuous resonance slots (all active)
     const findResonanceRanges = () => {
         const ranges: { start: number; end: number }[] = [];
         let rangeStart: number | null = null;
 
         timeSlots.forEach((slot, index) => {
-            if (slot.status === 'all-working') {
+            if (slot.status === 'all-active') {
                 if (rangeStart === null) {
                     rangeStart = slot.hour;
                 }
@@ -117,7 +117,7 @@ export function ResonanceSlot() {
             }
         });
 
-        // Handle case where last slot is working
+        // Handle case where last slot is active
         if (rangeStart !== null) {
             ranges.push({ start: rangeStart, end: 24 });
         }
@@ -130,7 +130,7 @@ export function ResonanceSlot() {
     // Get color for time slot
     const getSlotColor = (status: TimeSlot['status']) => {
         switch (status) {
-            case 'all-working':
+            case 'all-active':
                 return 'bg-green-500';
             case 'some-free':
                 return 'bg-yellow-400';
@@ -205,13 +205,13 @@ export function ResonanceSlot() {
                             key={slot.hour}
                             onClick={() => handleSlotClick(slot.hour)}
                             className={`h-8 ${getSlotColor(slot.status)} relative group cursor-pointer transition-all hover:scale-110`}
-                            title={`${formatHour(slot.hour)} - ${slot.workingCount}/${timezones.length} working - Click to set time`}
+                            title={`${formatHour(slot.hour)} - ${slot.activeCount}/${timezones.length} active - Click to set time`}
                         >
                             {/* Tooltip on hover */}
                             <div className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-10 w-48 bg-gray-900 text-white text-xs rounded py-2 px-3 shadow-lg">
                                 <div className="font-bold mb-1">{formatHour(slot.hour)}</div>
                                 <div className="text-green-300">
-                                    {slot.workingCount}/{timezones.length} working
+                                    {slot.activeCount}/{timezones.length} active
                                 </div>
                                 {slot.freeTimezones.length > 0 && (
                                     <div className="text-yellow-300 mt-1">
@@ -246,7 +246,7 @@ export function ResonanceSlot() {
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-500 rounded"></div>
                     <span className="text-gray-700">
-                        {t('resonanceSlotsAllWorking')}
+                        {t('resonanceSlotsAllActive')}
                     </span>
                 </div>
                 <div className="flex items-center gap-2">

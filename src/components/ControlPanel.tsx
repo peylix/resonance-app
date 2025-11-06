@@ -1,10 +1,8 @@
 import { useTimezoneStore } from "../store/timezoneStore";
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { FaPlay, FaPause } from "react-icons/fa6";
+import { FaPlay, FaPause, FaSun, FaMoon } from "react-icons/fa6";
 import { IoSettingsSharp, IoLanguage } from "react-icons/io5";
-import { MdWork } from 'react-icons/md';
-import { IoMdMoon } from 'react-icons/io';
 import { useTranslation } from "../hooks/useTranslation";
 import { languages } from '../i18n/translations';
 
@@ -12,11 +10,11 @@ export function ControlPanel() {
     const {
         timeState,
         setLiveMode,
-        workStart,
-        workEnd,
+        activeStart,
+        activeEnd,
         sleepStart,
         sleepEnd,
-        setWorkingHours,
+        setActiveHours,
         setSleepHours,
         setLanguage
 
@@ -25,8 +23,8 @@ export function ControlPanel() {
     const { t, language } = useTranslation();
 
     const [showSettings, setShowSettings] = useState(false);
-    const [tempWorkStart, setTempWorkStart] = useState(workStart);
-    const [tempWorkEnd, setTempWorkEnd] = useState(workEnd);
+    const [tempActiveStart, setTempActiveStart] = useState(activeStart);
+    const [tempActiveEnd, setTempActiveEnd] = useState(activeEnd);
     const [tempSleepStart, setTempSleepStart] = useState(sleepStart);
     const [tempSleepEnd, setTempSleepEnd] = useState(sleepEnd);
     const [validationError, setValidationError] = useState<string>('');
@@ -35,7 +33,7 @@ export function ControlPanel() {
         // Clear previous errors
         setValidationError('');
 
-        const values = [tempWorkStart, tempWorkEnd, tempSleepStart, tempSleepEnd];
+        const values = [tempActiveStart, tempActiveEnd, tempSleepStart, tempSleepEnd];
 
         // Validate that values are valid numbers
         if (values.some(isNaN)) {
@@ -49,21 +47,21 @@ export function ControlPanel() {
             return;
         }
 
-        // Validate that work/sleep start/end times are not the same
-        if (tempWorkStart === tempWorkEnd || tempSleepStart === tempSleepEnd) {
+        // Validate that active/sleep start/end times are not the same
+        if (tempActiveStart === tempActiveEnd || tempSleepStart === tempSleepEnd) {
             setValidationError(t('errorSameTime'));
             return;
         }
 
         // If all validations passed
-        setWorkingHours(tempWorkStart, tempWorkEnd);
+        setActiveHours(tempActiveStart, tempActiveEnd);
         setSleepHours(tempSleepStart, tempSleepEnd);
         setShowSettings(false);
     };
 
     const handleCancelSettings = () => {
-        setTempWorkStart(workStart);
-        setTempWorkEnd(workEnd);
+        setTempActiveStart(activeStart);
+        setTempActiveEnd(activeEnd);
         setTempSleepStart(sleepStart);
         setTempSleepEnd(sleepEnd);
         setValidationError('');
@@ -113,10 +111,10 @@ export function ControlPanel() {
                     >
                         <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('settings')}</h2>
 
-                        {/* Work time setting */}
+                        {/* Active time setting */}
                         <div className="mb-6">
                             <h3 className="text-lg font-semibold mb-2 text-green-600 flex items-center gap-2">
-                                <MdWork /> {t('workingHours')}
+                                <FaSun /> {t('activeHours')}
                             </h3>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1">
@@ -125,8 +123,8 @@ export function ControlPanel() {
                                         type="number"
                                         min="0"
                                         max="23"
-                                        value={tempWorkStart}
-                                        onChange={(e) => setTempWorkStart(parseInt(e.target.value))}
+                                        value={tempActiveStart}
+                                        onChange={(e) => setTempActiveStart(parseInt(e.target.value))}
                                         className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-gray-900"
                                     />
                                 </div>
@@ -136,21 +134,21 @@ export function ControlPanel() {
                                         type="number"
                                         min="0"
                                         max="23"
-                                        value={tempWorkEnd}
-                                        onChange={(e) => setTempWorkEnd(parseInt(e.target.value))}
+                                        value={tempActiveEnd}
+                                        onChange={(e) => setTempActiveEnd(parseInt(e.target.value))}
                                         className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-gray-900"
                                     />
                                 </div>
                             </div>
                             <p className="text-xs text-gray-500 mt-1">
-                                {tempWorkStart}:00 - {tempWorkEnd}:00
+                                {tempActiveStart}:00 - {tempActiveEnd}:00
                             </p>
                         </div>
 
                         {/* Sleep time setting */}
                         <div className="mb-6">
                             <h3 className="text-lg font-semibold mb-2 text-blue-600 flex items-center gap-2">
-                                <IoMdMoon /> {t('sleepHours')}
+                                <FaMoon /> {t('sleepHours')}
                             </h3>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1">

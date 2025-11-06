@@ -24,7 +24,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
         // Settings Modal
         settings: "Settings",
-        workingHours: "Working Hours",
+        activeHours: "Active Hours",
         sleepHours: "Sleep Hours",
         start: "Start",
         end: "End",
@@ -42,11 +42,11 @@ export const translations: Record<Language, Record<string, string>> = {
 
         // Resonance Slots
         resonanceSlotsTitle: "Resonance Slots",
-        resonanceSlotsDescription: "Add timezones to see when everyone can work together.",
+        resonanceSlotsDescription: "Add timezones to see when everyone is available.",
         resonanceSlotsPerfectTime: "Perfect Collaboration Time",
         resonanceSlotsNoPerfectTime: "No perfect overlap found. Check partial availability below.",
         resonanceSlotsTimeline: "24-Hour Overview",
-        resonanceSlotsAllWorking: "All Working",
+        resonanceSlotsAllActive: "All Active",
         resonanceSlotsSomeFree: "Some Free",
         resonanceSlotsSomeSleeping: "Some Sleeping",
 
@@ -55,7 +55,7 @@ export const translations: Record<Language, Record<string, string>> = {
         timezoneListHint: "Use the search box to add cities to your list.",
 
         // Timezone Card
-        timezoneCardWorking: "Working",
+        timezoneCardActive: "Active",
         timezoneCardSleeping: "Sleeping",
         timezoneCardFree: "Free",
 
@@ -91,7 +91,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
         // Settings Modal
         settings: "设置",
-        workingHours: "工作时间",
+        activeHours: "活跃时间",
         sleepHours: "睡眠时间",
         start: "开始",
         end: "结束",
@@ -109,11 +109,11 @@ export const translations: Record<Language, Record<string, string>> = {
 
         // Resonance Slots
         resonanceSlotsTitle: "共鸣时段",
-        resonanceSlotsDescription: "添加时区以查看大家何时可以一起工作。",
+        resonanceSlotsDescription: "添加时区以查看大家何时都在线。",
         resonanceSlotsPerfectTime: "完美协作时间",
         resonanceSlotsNoPerfectTime: "未找到完美重叠时间。请查看下方的部分可用时间。",
         resonanceSlotsTimeline: "24 小时概览",
-        resonanceSlotsAllWorking: "都处于工作时间",
+        resonanceSlotsAllActive: "都处于活跃时间",
         resonanceSlotsSomeFree: "有人处于空闲时间",
         resonanceSlotsSomeSleeping: "有人处于睡眠时间",
 
@@ -122,7 +122,7 @@ export const translations: Record<Language, Record<string, string>> = {
         timezoneListHint: "使用搜索框可以把城市添加到列表中。",
 
         // Timezone Card
-        timezoneCardWorking: "工作时间",
+        timezoneCardActive: "活跃时间",
         timezoneCardSleeping: "睡觉时间",
         timezoneCardFree: "空闲时间",
 

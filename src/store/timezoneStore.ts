@@ -14,8 +14,8 @@ interface TimezoneStore {
     language: Language;
 
     // user settings
-    workStart: number;
-    workEnd: number;
+    activeStart: number;
+    activeEnd: number;
     sleepStart: number;
     sleepEnd: number;
 
@@ -33,7 +33,7 @@ interface TimezoneStore {
     setLanguage: (language: Language) => void;
 
     // user settings operations
-    setWorkingHours: (start: number, end: number) => void;
+    setActiveHours: (start: number, end: number) => void;
     setSleepHours: (start: number, end: number) => void;
 }
 
@@ -48,8 +48,8 @@ export const useTimezoneStore = create<TimezoneStore>((set, get) => ({
 
     language: (navigator.language.startsWith('zh') ? 'zh' : 'en') as Language,
 
-    workStart: 9,
-    workEnd: 18,
+    activeStart: 9,
+    activeEnd: 18,
     sleepStart: 0,
     sleepEnd: 7,
 
@@ -105,10 +105,10 @@ export const useTimezoneStore = create<TimezoneStore>((set, get) => ({
         set({ language });
     },
 
-    setWorkingHours: (start: number, end: number) => {
+    setActiveHours: (start: number, end: number) => {
         set({
-            workStart: start,
-            workEnd: end
+            activeStart: start,
+            activeEnd: end
         });
     },
 
