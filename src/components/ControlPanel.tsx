@@ -1,5 +1,5 @@
 import { useTimezoneStore } from "../store/timezoneStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { FaPlay, FaPause, FaSun, FaMoon } from "react-icons/fa6";
 import { IoSettingsSharp, IoLanguage } from "react-icons/io5";
@@ -28,6 +28,15 @@ export function ControlPanel() {
     const [tempSleepStart, setTempSleepStart] = useState(sleepStart);
     const [tempSleepEnd, setTempSleepEnd] = useState(sleepEnd);
     const [validationError, setValidationError] = useState<string>('');
+    const [currentRealTime, setCurrentRealTime] = useState(new Date());
+
+    // Update real-time clock independently of live mode
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentRealTime(new Date());
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleSaveSettings = () => {
         // Clear previous errors
@@ -92,10 +101,10 @@ export function ControlPanel() {
 
             {/* Current time display */}
             <div className="text-sm text-gray-400">
-                {timeState.isLive ? t('currentTime') : t('selectedTime')}: {' '}
+                {t('currentTime')}: {' '}
                 <span className="font-mono text-gray-600">
                     {/* use 24-hour format */}
-                    {timeState.currentTime.toLocaleTimeString('en-GB', { hour12: false })}
+                    {currentRealTime.toLocaleTimeString('en-GB', { hour12: false })}
                 </span>
             </div>
 
