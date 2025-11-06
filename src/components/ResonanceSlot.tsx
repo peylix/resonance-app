@@ -7,7 +7,7 @@ import { useTranslation } from "../hooks/useTranslation";
 
 interface TimeSlot {
     hour: number; // Hour in reference timezone (0-23)
-    status: 'all-working' | 'some-free' | 'some-sleeping' | 'no-overlap';
+    status: 'all-working' | 'some-free' | 'some-sleeping';
     freeTimezones: string[]; // Translation keys for cities in free time
     sleepingTimezones: string[]; // Translation keys for cities in sleeping time
     workingCount: number; // Number of timezones in working hours
@@ -81,10 +81,8 @@ export function ResonanceSlot() {
                 status = 'all-working';
             } else if (sleepingTimezones.length > 0) {
                 status = 'some-sleeping';
-            } else if (freeTimezones.length > 0) {
-                status = 'some-free';
             } else {
-                status = 'no-overlap';
+                status = 'some-free';
             }
 
             slots.push({
@@ -139,7 +137,7 @@ export function ResonanceSlot() {
             case 'some-sleeping':
                 return 'bg-red-400';
             default:
-                return 'bg-gray-300';
+                return '';
         }
     };
 
@@ -261,12 +259,6 @@ export function ResonanceSlot() {
                     <div className="w-4 h-4 bg-red-400 rounded"></div>
                     <span className="text-gray-700">
                         {t('resonanceSlotsSomeSleeping')}
-                    </span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-gray-300 rounded"></div>
-                    <span className="text-gray-700">
-                        {t('resonanceSlotsNoWorking')}
                     </span>
                 </div>
             </div>

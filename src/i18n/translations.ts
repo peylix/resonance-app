@@ -46,10 +46,9 @@ export const translations: Record<Language, Record<string, string>> = {
         resonanceSlotsPerfectTime: "Perfect Collaboration Time",
         resonanceSlotsNoPerfectTime: "No perfect overlap found. Check partial availability below.",
         resonanceSlotsTimeline: "24-Hour Overview",
-        resonanceSlotsAllWorking: "Working",
-        resonanceSlotsSomeFree: "Free",
-        resonanceSlotsSomeSleeping: "Sleeping",
-        resonanceSlotsNoWorking: "No Working",
+        resonanceSlotsAllWorking: "All Working",
+        resonanceSlotsSomeFree: "Some Free",
+        resonanceSlotsSomeSleeping: "Some Sleeping",
 
         // Timezone List
         timezoneListPlaceholder: "No cities added yet.",
@@ -114,10 +113,9 @@ export const translations: Record<Language, Record<string, string>> = {
         resonanceSlotsPerfectTime: "完美协作时间",
         resonanceSlotsNoPerfectTime: "未找到完美重叠时间。请查看下方的部分可用时间。",
         resonanceSlotsTimeline: "24 小时概览",
-        resonanceSlotsAllWorking: "工作时间",
-        resonanceSlotsSomeFree: "空闲时间",
-        resonanceSlotsSomeSleeping: "睡眠时间",
-        resonanceSlotsNoWorking: "无工作时间",
+        resonanceSlotsAllWorking: "都处于工作时间",
+        resonanceSlotsSomeFree: "有人处于空闲时间",
+        resonanceSlotsSomeSleeping: "有人处于睡眠时间",
 
         // Timezone List
         timezoneListPlaceholder: "尚未添加任何城市。",
