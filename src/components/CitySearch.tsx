@@ -71,7 +71,7 @@ export function CitySearch() {
                                     key={city.timezone}
                                     onClick={() => handleSelectCity(city)}
                                     disabled={alreadyAdded}
-                                    className={`w-full px-4 py-3 text-left hover:bg-gray-700/50 transition-colors border-b border-gray-700/50 
+                                    className={`w-full px-4 py-3 text-left hover:bg-gray-300/50 transition-colors border-b border-gray-700/50
                                                 last:border-b-0 ${alreadyAdded ? 'opacity-50 cursor-not-allowed' : ''
                                                 }`}
                                 >
