@@ -9,7 +9,7 @@ interface TimezoneStore {
     timeState: TimeState;
     referenceTimezone: string;
 
-    // user preferences
+    // user settings
     workStart: number;
     workEnd: number;
     sleepStart: number;
@@ -25,7 +25,7 @@ interface TimezoneStore {
     setLiveMode: (isLive: boolean) => void;
     updateTime: () => void;
 
-    // user preference operations
+    // user settings operations
     setWorkingHours: (start: number, end: number) => void;
     setSleepHours: (start: number, end: number) => void;
 }
