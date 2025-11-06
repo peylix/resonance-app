@@ -4,22 +4,22 @@ import { FcGlobe } from "react-icons/fc";
 import { useTranslation } from '../hooks/useTranslation';
 
 export function TimezoneList() {
-    const {timezones} = useTimezoneStore();
+    const { timezones } = useTimezoneStore();
     const { t } = useTranslation();
 
     if (timezones.length === 0) {
         return (
-        <div className="flex flex-col items-center py-12 text-gray-400">
-            <div className="text-6xl mb-4">
+            <div className="flex flex-col items-center py-12 text-gray-400">
+                <div className="text-6xl mb-4">
                     <FcGlobe size={64} />
+                </div>
+                <p className="text-xl">
+                    {t('timezoneListPlaceholder')}
+                </p>
+                <p className="text-sm mt-2">
+                    {t('timezoneListHint')}
+                </p>
             </div>
-            <p className="text-xl">
-                {t('timezoneListPlaceholder')}
-            </p>
-            <p className="text-sm mt-2">
-                {t('timezoneListHint')}
-            </p>
-        </div>
         );
     }
 

@@ -23,7 +23,7 @@ export function formatFullTime(date: Date, timezone: string): string {
 /**
  * Obtain the label for a date
  * @param date - the date to check
- * @param timezone - IANA identifier for the target timezone 
+ * @param timezone - IANA identifier for the target timezone
  * @param referenceTimezone - IANA identifier for the reference timezone (usually user's local timezone)
  * @returns a string of date label
  */
@@ -44,9 +44,9 @@ export function getDateLabel(
 
     return dayDiff === 0 ? ''
         : dayDiff === 1 ? 'tomorrow'
-        : dayDiff === -1 ? 'yesterday'
-        : dayDiff > 1 ? `in ${Math.floor(dayDiff)} days`
-        : `${Math.abs(Math.floor(dayDiff))} days ago`
+            : dayDiff === -1 ? 'yesterday'
+                : dayDiff > 1 ? `in ${Math.floor(dayDiff)} days`
+                    : `${Math.abs(Math.floor(dayDiff))} days ago`
 }
 
 /**

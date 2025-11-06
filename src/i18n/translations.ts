@@ -1,14 +1,14 @@
 export type Language = 'en' | 'zh';
 
 export interface LanguageOption {
-  code: Language;
-  name: string;
-  nativeName: string;
+    code: Language;
+    name: string;
+    nativeName: string;
 }
 
 export const languages: LanguageOption[] = [
-  { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'zh', name: 'Chinese', nativeName: '汉语' },
+    { code: 'en', name: 'English', nativeName: 'English' },
+    { code: 'zh', name: 'Chinese', nativeName: '汉语' },
 ];
 
 export const translations: Record<Language, Record<string, string>> = {

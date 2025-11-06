@@ -73,37 +73,37 @@ export function CitySearch() {
                                     disabled={alreadyAdded}
                                     className={`w-full px-4 py-3 text-left hover:bg-gray-300/50 transition-colors border-b border-gray-700/50
                                                 last:border-b-0 ${alreadyAdded ? 'opacity-50 cursor-not-allowed' : ''
-                                                }`}
+                                        }`}
                                 >
-                                <div className="flex items-center gap-2">
-                                          {city.emoji && <span className="text-xl">{city.emoji}</span>}
-                                          <div>
-                                              <div className="font-semibold">
-                                                  {t(city.nameKey as any)}
-                                                  {alreadyAdded && <span className="ml-2 text-xs text-gray-400">(Added)</span>}
-                                              </div>
-                                              <div className="text-sm text-gray-400">{t(city.regionKey as any)}</div>
-                                          </div>
-                                      </div>
-                                  </button>
-                              );
-                          })
-                      ) : (
-                          <div className="px-4 py-3 text-gray-400 text-center">
-                              {t('searchNoResults')}
-                          </div>
-                      )}
-                  </div>
-              )}
+                                    <div className="flex items-center gap-2">
+                                        {city.emoji && <span className="text-xl">{city.emoji}</span>}
+                                        <div>
+                                            <div className="font-semibold">
+                                                {t(city.nameKey as any)}
+                                                {alreadyAdded && <span className="ml-2 text-xs text-gray-400">(Added)</span>}
+                                            </div>
+                                            <div className="text-sm text-gray-400">{t(city.regionKey as any)}</div>
+                                        </div>
+                                    </div>
+                                </button>
+                            );
+                        })
+                    ) : (
+                        <div className="px-4 py-3 text-gray-400 text-center">
+                            {t('searchNoResults')}
+                        </div>
+                    )}
+                </div>
+            )}
 
-              {/* click other places to close the list */}
-              {isOpen && (
-                  <div
-                      className="fixed inset-0 z-0"
-                      onClick={() => setIsOpen(false)}
-                  />
-              )}
-          </div>
+            {/* click other places to close the list */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 z-0"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+        </div>
 
 
     );
