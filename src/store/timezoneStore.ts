@@ -1,4 +1,5 @@
 import type { Timezone, TimeState } from '../types/timezone';
+import type { Language } from '../i18n/translations';
 import { create } from 'zustand';
 import { getUserTimezone, getUtcOffset } from '../utils/timezone';
 import { getCityByTimezone } from '../utils/cityData';
@@ -8,6 +9,9 @@ interface TimezoneStore {
     timezones: Timezone[];
     timeState: TimeState;
     referenceTimezone: string;
+
+    // language
+    language: Language;
 
     // user settings
     workStart: number;
@@ -25,6 +29,9 @@ interface TimezoneStore {
     setLiveMode: (isLive: boolean) => void;
     updateTime: () => void;
 
+    // language operations
+    setLanguage: (language: Language) => void;
+
     // user settings operations
     setWorkingHours: (start: number, end: number) => void;
     setSleepHours: (start: number, end: number) => void;
@@ -38,6 +45,8 @@ export const useTimezoneStore = create<TimezoneStore>((set, get) => ({
     },
 
     referenceTimezone: getUserTimezone(),
+
+    language: (navigator.language.startsWith('zh') ? 'zh' : 'en') as Language,
 
     workStart: 9,
     workEnd: 18,
@@ -92,6 +101,10 @@ export const useTimezoneStore = create<TimezoneStore>((set, get) => ({
         }
     },
 
+    setLanguage: (language) => {
+        set({ language });
+    },
+
     setWorkingHours: (start: number, end: number) => {
         set({
             workStart: start,
@@ -119,8 +132,8 @@ export function createTimezoneFromCity(CityName: string): Timezone | null {
 
     return {
         id: `${city.timezone}-${Date.now()}`,
-        city: city.name,
-        country: city.country,
+        cityKey: city.nameKey,
+        regionKey: city.regionKey,
         timezone: city.timezone,
         offset: getUtcOffset(city.timezone),
         emoji: city.emoji,

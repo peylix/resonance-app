@@ -2,9 +2,11 @@ import { useTimezoneStore } from "../store/timezoneStore";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { FaPlay, FaPause } from "react-icons/fa6";
-import { IoSettingsSharp } from "react-icons/io5";
+import { IoSettingsSharp, IoLanguage } from "react-icons/io5";
 import { MdWork } from 'react-icons/md';
 import { IoMdMoon } from 'react-icons/io';
+import { useTranslation } from "../hooks/useTranslation";
+import { languages } from '../i18n/translations';
 
 export function ControlPanel() {
     const {
@@ -15,9 +17,12 @@ export function ControlPanel() {
         sleepStart,
         sleepEnd,
         setWorkingHours,
-        setSleepHours
+        setSleepHours,
+        setLanguage
 
     } = useTimezoneStore();
+
+    const { t, language } = useTranslation();
 
     const [showSettings, setShowSettings] = useState(false);
     const [tempWorkStart, setTempWorkStart] = useState(workStart);
@@ -34,19 +39,19 @@ export function ControlPanel() {
 
         // Validate that values are valid numbers
         if (values.some(isNaN)) {
-            setValidationError('All time values must be filled');
+            setValidationError(t('errorAllFieldsRequired'));
             return;
         }
 
         // Validate that values are in valid range (0-23)
         if (values.some(v => v < 0 || v > 23)) {
-            setValidationError('All time values must be between 0 and 23');
+            setValidationError(t('errorInvalidRange'));
             return;
         }
 
         // Validate that work/sleep start/end times are not the same
         if (tempWorkStart === tempWorkEnd || tempSleepStart === tempSleepEnd) {
-            setValidationError('Start and end times cannot be the same');
+            setValidationError(t('errorSameTime'));
             return;
         }
 
@@ -89,7 +94,7 @@ export function ControlPanel() {
 
             {/* Current time display */}
             <div className="text-sm text-gray-400">
-                {timeState.isLive ? 'Current Time' : 'Selected Time'}: {' '}
+                {timeState.isLive ? t('currentTime') : t('selectedTime')}: {' '}
                 <span className="font-mono text-gray-600">
                     {/* use 24-hour format */}
                     {timeState.currentTime.toLocaleTimeString('en-GB', { hour12: false })}
@@ -106,16 +111,16 @@ export function ControlPanel() {
                         className="bg-white rounded-lg p-6 max-w-md w-full border border-gray-300 shadow-xl"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h2 className="text-2xl font-bold mb-4 text-gray-900">Time Preferences</h2>
+                        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('settings')}</h2>
 
                         {/* Work time setting */}
                         <div className="mb-6">
                             <h3 className="text-lg font-semibold mb-2 text-green-600 flex items-center gap-2">
-                                <MdWork /> Working Hours
+                                <MdWork /> {t('workingHours')}
                             </h3>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1">Start</label>
+                                    <label className="block text-sm text-gray-600 mb-1">{t('start')}</label>
                                     <input
                                         type="number"
                                         min="0"
@@ -126,7 +131,7 @@ export function ControlPanel() {
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1">End</label>
+                                    <label className="block text-sm text-gray-600 mb-1">{t('end')}</label>
                                     <input
                                         type="number"
                                         min="0"
@@ -145,11 +150,11 @@ export function ControlPanel() {
                         {/* Sleep time setting */}
                         <div className="mb-6">
                             <h3 className="text-lg font-semibold mb-2 text-blue-600 flex items-center gap-2">
-                                <IoMdMoon /> Sleep Hours
+                                <IoMdMoon /> {t('sleepHours')}
                             </h3>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1">Start</label>
+                                    <label className="block text-sm text-gray-600 mb-1">{t('start')}</label>
                                     <input
                                         type="number"
                                         min="0"
@@ -160,7 +165,7 @@ export function ControlPanel() {
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1">End</label>
+                                    <label className="block text-sm text-gray-600 mb-1">{t('end')}</label>
                                     <input
                                         type="number"
                                         min="0"
@@ -176,6 +181,31 @@ export function ControlPanel() {
                             </p>
                         </div>
 
+                        {/* Divider */}
+                        <div className="my-6 border-t border-gray-200"></div>
+
+                        {/* Language selector */}
+                        <div className="mb-6">
+                            <h3 className="text-lg font-semibold mb-2 text-gray-600 flex items-center gap-2">
+                                <IoLanguage /> {t('language')}
+                            </h3>
+                            <select
+                                id="language-select"
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value as any)}
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded
+                                           text-gray-700 hover:border-gray-400 focus:outline-none
+                                           focus:border-blue-500 focus:ring-1 focus:ring-blue-500
+                                           cursor-pointer transition-all"
+                            >
+                                {languages.map((lang) => (
+                                    <option key={lang.code} value={lang.code}>
+                                        {lang.nativeName}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         {/* Validation error message */}
                         {validationError && (
                             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -189,13 +219,13 @@ export function ControlPanel() {
                                 onClick={handleSaveSettings}
                                 className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
                             >
-                                Save
+                                {t('save')}
                             </button>
                             <button
                                 onClick={handleCancelSettings}
                                 className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
                             >
-                                Cancel
+                                {t('cancel')}
                             </button>
                         </div>
                     </div>

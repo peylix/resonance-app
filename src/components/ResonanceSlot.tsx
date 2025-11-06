@@ -3,12 +3,13 @@ import { isWorkingHours, isSleepHours } from "../utils/timezone";
 import { toZonedTime } from "date-fns-tz";
 import { addHours, startOfDay } from "date-fns";
 import { FcIdea } from "react-icons/fc";
+import { useTranslation } from "../hooks/useTranslation";
 
 interface TimeSlot {
     hour: number; // Hour in reference timezone (0-23)
     status: 'all-working' | 'some-free' | 'some-sleeping' | 'no-overlap';
-    freeTimezones: string[]; // Cities in free time
-    sleepingTimezones: string[]; // Cities in sleeping time
+    freeTimezones: string[]; // Translation keys for cities in free time
+    sleepingTimezones: string[]; // Translation keys for cities in sleeping time
     workingCount: number; // Number of timezones in working hours
 }
 
@@ -24,15 +25,17 @@ export function ResonanceSlot() {
         setCurrentTime
     } = useTimezoneStore();
 
+    const { t } = useTranslation();
+
     // If no timezones added, show placeholder
     if (timezones.length === 0) {
         return (
             <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 border border-gray-200">
                 <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
-                    <FcIdea /> Resonance Slots
+                    <FcIdea /> {t('resonanceSlotsTitle')}
                 </h2>
                 <p className="text-sm text-gray-600">
-                    Add timezones to see when everyone can work together
+                    {t('resonanceSlotsDescription')}
                 </p>
             </div>
         );
@@ -66,9 +69,9 @@ export function ResonanceSlot() {
                 if (isWorkingHours(tzHour, workStart, workEnd)) {
                     workingCount++;
                 } else if (isSleepHours(tzHour, sleepStart, sleepEnd)) {
-                    sleepingTimezones.push(tz.city);
+                    sleepingTimezones.push(tz.cityKey);
                 } else {
-                    freeTimezones.push(tz.city);
+                    freeTimezones.push(tz.cityKey);
                 }
             });
 
@@ -160,14 +163,14 @@ export function ResonanceSlot() {
     return (
         <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 border border-gray-200">
             <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
-                <FcIdea /> Resonance Slots
+                <FcIdea /> {t('resonanceSlotsTitle')}
             </h2>
 
             {/* Resonance Ranges Summary */}
             {resonanceRanges.length > 0 ? (
                 <div className="mb-6">
                     <h3 className="text-sm font-semibold text-green-700 mb-2">
-                        Perfect Collaboration Time
+                        {t('resonanceSlotsPerfectTime')}
                     </h3>
                     <div className="space-y-2">
                         {resonanceRanges.map((range, index) => (
@@ -188,14 +191,16 @@ export function ResonanceSlot() {
             ) : (
                 <div className="mb-6 bg-yellow-100 border border-yellow-300 rounded-lg px-4 py-3">
                     <p className="text-sm text-yellow-800">
-                        No perfect overlap found. Check partial availability below.
+                        {t('resonanceSlotsNoPerfectTime')}
                     </p>
                 </div>
             )}
 
             {/* 24-hour Timeline */}
             <div className="mb-4">
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">24-Hour Overview</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                    {t('resonanceSlotsTimeline')}
+                </h3>
                 <div className="grid grid-cols-24 gap-0.5">
                     {timeSlots.map((slot) => (
                         <div
@@ -212,12 +217,12 @@ export function ResonanceSlot() {
                                 </div>
                                 {slot.freeTimezones.length > 0 && (
                                     <div className="text-yellow-300 mt-1">
-                                        Free: {slot.freeTimezones.join(', ')}
+                                        Free: {slot.freeTimezones.map(key => t(key as any)).join(', ')}
                                     </div>
                                 )}
                                 {slot.sleepingTimezones.length > 0 && (
                                     <div className="text-red-300 mt-1">
-                                        Sleeping: {slot.sleepingTimezones.join(', ')}
+                                        Sleeping: {slot.sleepingTimezones.map(key => t(key as any)).join(', ')}
                                     </div>
                                 )}
                             </div>
@@ -242,19 +247,27 @@ export function ResonanceSlot() {
             <div className="flex flex-wrap gap-4 text-xs">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-500 rounded"></div>
-                    <span className="text-gray-700">All Working</span>
+                    <span className="text-gray-700">
+                        {t('resonanceSlotsAllWorking')}
+                    </span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-yellow-400 rounded"></div>
-                    <span className="text-gray-700">Some Free</span>
+                    <span className="text-gray-700">
+                        {t('resonanceSlotsSomeFree')}
+                    </span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-red-400 rounded"></div>
-                    <span className="text-gray-700">Some Sleeping</span>
+                    <span className="text-gray-700">
+                        {t('resonanceSlotsSomeSleeping')}
+                    </span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-gray-300 rounded"></div>
-                    <span className="text-gray-700">No Working</span>
+                    <span className="text-gray-700">
+                        {t('resonanceSlotsNoWorking')}
+                    </span>
                 </div>
             </div>
         </div>

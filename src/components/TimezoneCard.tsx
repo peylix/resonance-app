@@ -5,6 +5,7 @@ import { isWorkingHours, isSleepHours } from '../utils/timezone';
 import { MdWork } from 'react-icons/md';
 import { IoMdMoon } from 'react-icons/io';
 import { FaStar } from 'react-icons/fa';
+import { useTranslation } from '../hooks/useTranslation';
 
 
 interface TimezoneCardProps {
@@ -22,6 +23,7 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
         sleepEnd
     } = useTimezoneStore();
     const { currentTime } = timeState;
+    const { t } = useTranslation();
 
     const time = formatTime(currentTime, timezone.timezone);
     const dateLabel = getDateLabel(currentTime, timezone.timezone, referenceTimezone);
@@ -30,39 +32,39 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
 
     const getTimeColor = () => {
         if (isWorkingHours(hour, workStart, workEnd)) {
-            return 'border-gray-900 bg-gray-50'; // 工作时间
+            return 'border-gray-900 bg-gray-50'; // working time
         }
         if (isSleepHours(hour, sleepStart, sleepEnd)) {
-            return 'border-gray-400 bg-gray-100'; // 睡眠时间
+            return 'border-gray-400 bg-gray-100'; // sleep time
         }
-        return 'border-gray-600 bg-white'; // 自由时间
+        return 'border-gray-600 bg-white'; // free time
     };
 
     const getTimeLabel = () => {
         if (isWorkingHours(hour, workStart, workEnd)) {
             return (
                 <span className="flex items-center gap-1">
-                    <MdWork /> Working
+                    <MdWork /> {t('timezoneCardWorking')}
                 </span>
             );
         }
         if (isSleepHours(hour, sleepStart, sleepEnd)) {
             return (
                 <span className="flex items-center gap-1">
-                    <IoMdMoon /> Sleeping
+                    <IoMdMoon /> {t('timezoneCardSleeping')}
                 </span>
             );
         }
         return (
             <span className="flex items-center gap-1">
-                <FaStar /> Free
+                <FaStar /> {t('timezoneCardFree')}
             </span>
         );
     };
 
     return (
         <div className={`relative rounded-lg border-2 p-6 transition-all duration-300 hover:shadow-xl ${getTimeColor()}`}>
-            {/* 删除按钮 */}
+            {/* delete button */}
             <button
                 onClick={() => removeTimezone(timezone.id)}
                 className="absolute top-3 right-3 text-gray-400 hover:text-red-600 transition-colors"
@@ -71,16 +73,16 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
                 ✕
             </button>
 
-            {/* 城市信息 */}
+            {/* city info */}
             <div className="mb-4">
                 <div className="flex items-center gap-2 mb-1">
                     {timezone.emoji && <span className="text-2xl">{timezone.emoji}</span>}
-                    <h3 className="text-xl font-bold text-gray-900">{timezone.city}</h3>
+                    <h3 className="text-xl font-bold text-gray-900">{t(timezone.cityKey as any)}</h3>
                 </div>
-                <p className="text-sm text-gray-600">{timezone.country}</p>
+                <p className="text-sm text-gray-600">{t(timezone.regionKey as any)}</p>
             </div>
 
-            {/* 时间显示 */}
+            {/* time display */}
             <div className="mb-3">
                 <div className="text-4xl font-mono font-bold mb-1 text-gray-900">{time}</div>
                 <div className="flex items-center gap-2">
@@ -93,7 +95,7 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
                 </div>
             </div>
 
-            {/* 时间差显示 */}
+            {/* time difference display */}
             <div className="text-sm text-gray-600">
                 {timeDiff}
             </div>

@@ -6,44 +6,44 @@ import type { CityData } from '../types/timezone';
  */
 export const CITY_DATA: CityData[] = [
     {
-        name: 'Beijing',
+        nameKey: 'cityBeijing',
         timezone: 'Asia/Shanghai',
-        country: 'Mainland China',
+        regionKey: 'regionCN',
         emoji: '🇨🇳',
         searchTerms: ['beijing', 'bj', 'china', 'cn', 'asia', 'shanghai', '北京', '中国', '上海']
     },
     {
-        name: 'Hong Kong',
+        nameKey: 'cityHongKong',
         timezone: 'Asia/Hong_Kong',
-        country: 'Hong Kong SAR',
+        regionKey: 'regionHK',
         emoji: '🇭🇰',
         searchTerms: ['hong kong', 'hk', 'china', 'cn', 'asia', '香港', '中国']
     },
     {
-        name: 'Seattle',
+        nameKey: 'citySeattle',
         timezone: 'America/Los_Angeles',
-        country: 'United States',
+        regionKey: 'regionUS',
         emoji: '🇺🇸',
         searchTerms: ['seattle', 'wa', 'usa', 'us', 'america', 'north america', '美国', '西雅图']
     },
     {
-        name: 'New York',
+        nameKey: 'cityNewYork',
         timezone: 'America/New_York',
-        country: 'United States',
+        regionKey: 'regionUS',
         emoji: '🇺🇸',
         searchTerms: ['new york', 'nyc', 'usa', 'us', 'america', 'north america', '纽约', '美国']
     },
     {
-        name: 'London',
+        nameKey: 'cityLondon',
         timezone: 'Europe/London',
-        country: 'United Kingdom',
+        regionKey: 'regionUK',
         emoji: '🇬🇧',
         searchTerms: ['london', 'uk', 'gb', 'united kingdom', 'europe', '欧洲', '伦敦', '英国']
     },
     {
-        name: 'Queensland',
+        nameKey: 'cityQueensland',
         timezone: 'Australia/Brisbane',
-        country: 'Australia',
+        regionKey: 'regionAUS',
         emoji: '🇦🇺',
         searchTerms: ['queensland', 'brisbane', 'australia', 'au', 'oceania', '大洋洲', '澳大利亚', '昆士兰', '布里斯班']
     }
@@ -60,12 +60,6 @@ export function searchCities(query: string): CityData[] {
     const lowerQuery = query.toLowerCase().trim();
 
     return CITY_DATA.filter(city =>
-        // match the city names
-        city.name.toLowerCase().includes(lowerQuery) ||
-
-        // match the country names
-        city.country.toLowerCase().includes(lowerQuery) ||
-
         // match the search terms
         city.searchTerms?.some(term => term.includes(lowerQuery))
     );

@@ -3,11 +3,13 @@ import { useTimezoneStore } from '../store/timezoneStore'
 import { searchCities } from '../utils/cityData';
 import type { CityData } from '../types/timezone';
 import { getUtcOffset } from '../utils/timezone';
+import { useTranslation } from '../hooks/useTranslation';
 
 export function CitySearch() {
     const [query, setQuery] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const { addTimezone, timezones } = useTimezoneStore();
+    const { t } = useTranslation();
 
     const searchResults = query.trim() ? searchCities(query) : [];
 
@@ -17,8 +19,8 @@ export function CitySearch() {
 
         const newTimezone = {
             id: `${city.timezone}-${Date.now()}`,
-            city: city.name,
-            country: city.country,
+            cityKey: city.nameKey,
+            regionKey: city.regionKey,
             timezone: city.timezone,
             offset: getUtcOffset(city.timezone),
             emoji: city.emoji
@@ -41,7 +43,7 @@ export function CitySearch() {
                         setIsOpen(true);
                     }}
                     onFocus={() => setIsOpen(true)}
-                    placeholder="Search for a city or country..."
+                    placeholder={t('searchPlaceholder')}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 transition-colors"
                 />
                 {query && (
@@ -77,10 +79,10 @@ export function CitySearch() {
                                           {city.emoji && <span className="text-xl">{city.emoji}</span>}
                                           <div>
                                               <div className="font-semibold">
-                                                  {city.name}
+                                                  {t(city.nameKey as any)}
                                                   {alreadyAdded && <span className="ml-2 text-xs text-gray-400">(Added)</span>}
                                               </div>
-                                              <div className="text-sm text-gray-400">{city.country}</div>
+                                              <div className="text-sm text-gray-400">{t(city.regionKey as any)}</div>
                                           </div>
                                       </div>
                                   </button>
@@ -88,7 +90,7 @@ export function CitySearch() {
                           })
                       ) : (
                           <div className="px-4 py-3 text-gray-400 text-center">
-                              No cities found
+                              {t('searchNoResults')}
                           </div>
                       )}
                   </div>

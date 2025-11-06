@@ -1,9 +1,11 @@
 import { useTimezoneStore } from '../store/timezoneStore';
 import { TimezoneCardWithTimeline } from './TimezoneCardWithTimeline';
 import { FcGlobe } from "react-icons/fc";
+import { useTranslation } from '../hooks/useTranslation';
 
 export function TimezoneList() {
     const {timezones} = useTimezoneStore();
+    const { t } = useTranslation();
 
     if (timezones.length === 0) {
         return (
@@ -11,8 +13,12 @@ export function TimezoneList() {
             <div className="text-6xl mb-4">
                     <FcGlobe size={64} />
             </div>
-            <p className="text-xl">No cities added yet.</p>
-            <p className="text-sm mt-2"> Use the search above to add cities to your list.</p>
+            <p className="text-xl">
+                {t('timezoneListPlaceholder')}
+            </p>
+            <p className="text-sm mt-2">
+                {t('timezoneListHint')}
+            </p>
         </div>
         );
     }

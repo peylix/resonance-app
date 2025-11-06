@@ -6,9 +6,11 @@ import { CitySearch } from './components/CitySearch';
 import { TimezoneList } from './components/TimezoneList';
 import { ResonanceSlot } from './components/ResonanceSlot';
 import { FaGithub } from 'react-icons/fa6';
+import { useTranslation } from './hooks/useTranslation';
 
 export function App() {
   const { updateTime, timeState } = useTimezoneStore();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!timeState.isLive) return;
@@ -28,12 +30,10 @@ export function App() {
           {/* header */}
           <header className="mb-8">
             <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-gray-900">
-              共鸣钟
-              <br />
-              Resonance
+              {t('appTitle')}
             </h1>
             <p className="text-gray-600 text-sm lg:text-base">
-              Coordinate time across timezones and resonate together.
+              {t('appSubtitle')}
             </p>
           </header>
 
@@ -73,7 +73,7 @@ export function App() {
             >
               <FaGithub className="w-6 h-6" />
             </a>
-            <p className="text-sm text-gray-600">Made by Peylix</p>
+            <p className="text-sm text-gray-600">{t('madeBy')}</p>
           </div>
         </footer>
       </div>

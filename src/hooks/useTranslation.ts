@@ -1,0 +1,14 @@
+import { useTimezoneStore } from '../store/timezoneStore';
+import { translations } from '../i18n/translations';
+import type { TranslationKey } from '../i18n/translations';
+
+export function useTranslation() {
+    const language = useTimezoneStore((state) => state.language);
+
+    const t = (key: TranslationKey): string => {
+        return translations[language][key] || key;
+    };
+
+    return { t, language };
+}
+
