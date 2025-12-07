@@ -1,4 +1,4 @@
-import { useTimezoneStore } from './store/timezoneStore';
+import { useTimezoneStore, createTimezoneFromCity } from './store/timezoneStore';
 import { useEffect } from 'react';
 import './index.css';
 import { ControlPanel } from './components/ControlPanel';
@@ -7,10 +7,30 @@ import { TimezoneList } from './components/TimezoneList';
 import { ResonanceSlot } from './components/ResonanceSlot';
 import { FaGithub } from 'react-icons/fa6';
 import { useTranslation } from './hooks/useTranslation';
+import { getUserTimezone } from './utils/timezone';
+import { getCityByTimezone } from './utils/cityData';
 
 export function App() {
-  const { updateTime, timeState } = useTimezoneStore();
+  const { updateTime, timeState, addTimezone, timezones } = useTimezoneStore();
   const { t } = useTranslation();
+
+  // Auto-detect and add user's timezone on first visit
+  useEffect(() => {
+    const hasAutoAdded = sessionStorage.getItem('hasAutoAddedTimezone');
+
+    if (!hasAutoAdded && timezones.length === 0) {
+      const userTimezone = getUserTimezone();
+      const city = getCityByTimezone(userTimezone);
+
+      if (city) {
+        const timezone = createTimezoneFromCity(userTimezone);
+        if (timezone) {
+          addTimezone(timezone);
+          sessionStorage.setItem('hasAutoAddedTimezone', 'true');
+        }
+      }
+    }
+  }, [addTimezone, timezones.length]);
 
   useEffect(() => {
     if (!timeState.isLive) return;
