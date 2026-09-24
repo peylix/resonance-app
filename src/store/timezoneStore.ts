@@ -1,6 +1,7 @@
 import type { Timezone, TimeState } from '../types/timezone';
 import type { Language } from '../i18n/translations';
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { getUserTimezone, getUtcOffset } from '../utils/timezone';
 import { getCityByTimezone } from '../utils/cityData';
 
@@ -19,6 +20,9 @@ interface TimezoneStore {
     sleepStart: number;
     sleepEnd: number;
 
+    // whether the user's own timezone has been auto-added on the first visit
+    hasAutoAddedTimezone: boolean;
+
     // timezone operations
     addTimezone: (timezone: Timezone) => void;
     removeTimezone: (id: string) => void;
@@ -35,9 +39,10 @@ interface TimezoneStore {
     // user settings operations
     setActiveHours: (start: number, end: number) => void;
     setSleepHours: (start: number, end: number) => void;
+    markTimezoneAutoAdded: () => void;
 }
 
-export const useTimezoneStore = create<TimezoneStore>((set, get) => ({
+export const useTimezoneStore = create<TimezoneStore>()(persist((set, get) => ({
     timezones: [],
     timeState: {
         currentTime: new Date(),
@@ -52,6 +57,8 @@ export const useTimezoneStore = create<TimezoneStore>((set, get) => ({
     activeEnd: 18,
     sleepStart: 0,
     sleepEnd: 7,
+
+    hasAutoAddedTimezone: false,
 
     addTimezone: (timezone) => {
         set((state) => ({
@@ -119,6 +126,22 @@ export const useTimezoneStore = create<TimezoneStore>((set, get) => ({
         });
     },
 
+    markTimezoneAutoAdded: () => {
+        set({ hasAutoAddedTimezone: true });
+    },
+
+}), {
+    name: 'resonance-settings',
+    // Only persist user choices; the clock state and reference timezone are runtime values
+    partialize: (state) => ({
+        timezones: state.timezones,
+        language: state.language,
+        activeStart: state.activeStart,
+        activeEnd: state.activeEnd,
+        sleepStart: state.sleepStart,
+        sleepEnd: state.sleepEnd,
+        hasAutoAddedTimezone: state.hasAutoAddedTimezone,
+    }),
 }));
 
 /**

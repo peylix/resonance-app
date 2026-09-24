@@ -1,5 +1,5 @@
 import { toZonedTime, formatInTimeZone, fromZonedTime } from 'date-fns-tz';
-import { differenceInMinutes, addMinutes, startOfDay } from 'date-fns';
+import { differenceInMinutes, differenceInCalendarDays, addMinutes, startOfDay } from 'date-fns';
 
 /**
  * Format a date to HH:mm
@@ -21,69 +21,40 @@ export function formatFullTime(date: Date, timezone: string): string {
 }
 
 /**
- * Obtain the label for a date
+ * Obtain the calendar day difference between two timezones at a given moment
  * @param date - the date to check
  * @param timezone - IANA identifier for the target timezone
  * @param referenceTimezone - IANA identifier for the reference timezone (usually user's local timezone)
- * @returns a string of date label
+ * @returns days the target timezone is ahead of the reference (e.g., 1 for "tomorrow", -1 for "yesterday")
  */
-export function getDateLabel(
+export function getDayDifference(
     date: Date,
     timezone: string,
     referenceTimezone: string
-): string {
+): number {
     // get the local date for two timezones
     const targetDate = toZonedTime(date, timezone);
     const refDate = toZonedTime(date, referenceTimezone);
 
-    // compare date
-    const targetDay = startOfDay(targetDate).getTime();
-    const refDay = startOfDay(refDate).getTime();
-
-    const dayDiff = (targetDay - refDay) / (1000 * 60 * 60 * 24);
-
-    return dayDiff === 0 ? ''
-        : dayDiff === 1 ? 'tomorrow'
-            : dayDiff === -1 ? 'yesterday'
-                : dayDiff > 1 ? `in ${Math.floor(dayDiff)} days`
-                    : `${Math.abs(Math.floor(dayDiff))} days ago`
+    // compare calendar days, which stays correct on 23h/25h DST days
+    return differenceInCalendarDays(targetDate, refDate);
 }
 
 /**
- * Calculate the UTC offset difference (using human language)
+ * Calculate the UTC offset difference between two timezones
  * @param timezone - IANA identifier for the target timezone
  * @param referenceTimezone - IANA identifier for the reference timezone (usually user's local timezone)
- * @returns discription of the offset difference (e.g., "+3 hours", "-30 minutes", "same time")
+ * @returns minutes the target timezone is ahead of the reference (negative if behind)
  */
 export function getTimeDifference(
     timezone: string,
     referenceTimezone: string,
     currentTime: Date = new Date()
-): string {
+): number {
     const targetTime = toZonedTime(currentTime, timezone);
     const refTime = toZonedTime(currentTime, referenceTimezone);
 
-    const diffMinutes = differenceInMinutes(targetTime, refTime);
-
-    if (diffMinutes === 0) return 'Same time!';
-
-    const hours = Math.abs(diffMinutes / 60);
-    const isAhead = diffMinutes > 0;
-
-    // if the diff is in full hours
-    if (Number.isInteger(hours))
-        return isAhead ? `+${hours} h` : `-${hours} h`;
-
-    // if the diff is not in full hours
-    const fullHours = Math.floor(hours);
-    const minutes = Math.abs(diffMinutes % 60);
-
-    if (fullHours === 0)
-        return isAhead ? `+${minutes} m` : `-${minutes} m`;
-
-    return isAhead
-        ? `+${fullHours} h ${minutes} m`
-        : `-${fullHours} h ${minutes} m`;
+    return differenceInMinutes(targetTime, refTime);
 }
 
 /**

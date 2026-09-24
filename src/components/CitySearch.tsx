@@ -78,7 +78,7 @@ export function CitySearch() {
                                         <div>
                                             <div className="font-semibold">
                                                 {t(city.nameKey as any)}
-                                                {alreadyAdded && <span className="ml-2 text-xs text-gray-400">(Added)</span>}
+                                                {alreadyAdded && <span className="ml-2 text-xs text-gray-400">{t('searchAdded')}</span>}
                                             </div>
                                             <div className="text-sm text-gray-400">{t(city.regionKey as any)}</div>
                                         </div>

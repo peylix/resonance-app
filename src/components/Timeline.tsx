@@ -45,7 +45,9 @@ export function Timeline({ timezone }: TimelineProps) {
         // update drag percentage for immediate visual feedback
         setDragPercentage(newPercentage);
 
-        const newTime = getTimeFromPercentage(newPercentage, currentTime, timezone.timezone);
+        // read the latest time from the store, since document listeners hold an old closure
+        const latestTime = useTimezoneStore.getState().timeState.currentTime;
+        const newTime = getTimeFromPercentage(newPercentage, latestTime, timezone.timezone);
         setCurrentTime(newTime);
     };
 
@@ -101,7 +103,7 @@ export function Timeline({ timezone }: TimelineProps) {
             {/* timeline container */}
             <div
                 ref={timelineRef}
-                className="relative h-12 bg-gray-800/50 rounded-lg cursor-pointer overflow-hidden"
+                className="relative h-12 bg-gray-800/50 rounded-lg cursor-pointer overflow-hidden touch-none select-none"
                 onMouseDown={handleDragStart}
                 onTouchStart={handleDragStart}
             >

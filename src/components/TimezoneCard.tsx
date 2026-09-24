@@ -1,6 +1,6 @@
 import type { Timezone } from '../types/timezone';
 import { useTimezoneStore } from '../store/timezoneStore';
-import { formatTime, getDateLabel, getTimeDifference } from '../utils/timezone';
+import { formatTime, getDayDifference, getTimeDifference } from '../utils/timezone';
 import { isActiveHours, isSleepHours } from '../utils/timezone';
 import { FaSun, FaMoon, FaStar } from "react-icons/fa6";
 import { useTranslation } from '../hooks/useTranslation';
@@ -21,9 +21,34 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
     const { t } = useTranslation();
 
     const time = formatTime(currentTime, timezone.timezone);
-    const dateLabel = getDateLabel(currentTime, timezone.timezone, referenceTimezone);
-    const timeDiff = getTimeDifference(timezone.timezone, referenceTimezone, currentTime);
+    const dayDiff = getDayDifference(currentTime, timezone.timezone, referenceTimezone);
+    const diffMinutes = getTimeDifference(timezone.timezone, referenceTimezone, currentTime);
     const hour = new Date(currentTime.toLocaleString('en-US', { timeZone: timezone.timezone })).getHours();
+
+    const getDateLabel = () => {
+        if (dayDiff === 0) return '';
+        if (dayDiff === 1) return t('dateTomorrow');
+        if (dayDiff === -1) return t('dateYesterday');
+        return dayDiff > 1
+            ? t('dateInDays', { n: dayDiff })
+            : t('dateDaysAgo', { n: -dayDiff });
+    };
+
+    const getTimeDiffLabel = () => {
+        if (diffMinutes === 0) return t('diffSameTime');
+
+        const sign = diffMinutes > 0 ? '+' : '-';
+        const hours = Math.floor(Math.abs(diffMinutes) / 60);
+        const minutes = Math.abs(diffMinutes) % 60;
+
+        const parts: string[] = [];
+        if (hours > 0) parts.push(t('diffHours', { n: hours }));
+        if (minutes > 0) parts.push(t('diffMinutes', { n: minutes }));
+
+        return `${sign}${parts.join(' ')}`;
+    };
+
+    const dateLabel = getDateLabel();
 
     const getTimeColor = () => {
         if (isActiveHours(hour, activeStart, activeEnd)) {
@@ -91,7 +116,7 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
 
             {/* time difference display */}
             <div className="text-sm text-gray-600">
-                {timeDiff}
+                {getTimeDiffLabel()}
             </div>
         </div>
     );

@@ -101,7 +101,7 @@ export function ResonanceSlot() {
         const ranges: { start: number; end: number }[] = [];
         let rangeStart: number | null = null;
 
-        timeSlots.forEach((slot, index) => {
+        timeSlots.forEach((slot) => {
             if (slot.status === 'all-active') {
                 if (rangeStart === null) {
                     rangeStart = slot.hour;
@@ -117,6 +117,14 @@ export function ResonanceSlot() {
         // Handle case where last slot is active
         if (rangeStart !== null) {
             ranges.push({ start: rangeStart, end: 24 });
+        }
+
+        // Merge a range ending at midnight with one starting at midnight (e.g., 22-24 + 0-2 => 22-2)
+        const first = ranges[0];
+        const last = ranges[ranges.length - 1];
+        if (ranges.length > 1 && first && last && first.start === 0 && last.end === 24) {
+            ranges.pop();
+            ranges[0] = { start: last.start, end: first.end };
         }
 
         return ranges;
@@ -140,6 +148,11 @@ export function ResonanceSlot() {
 
     const formatHour = (hour: number) => {
         return `${hour.toString().padStart(2, '0')}:00`;
+    };
+
+    // Ranges wrapping past midnight have end < start
+    const getRangeDuration = (range: { start: number; end: number }) => {
+        return range.end > range.start ? range.end - range.start : range.end + 24 - range.start;
     };
 
     // Handle clicking on a time slot to set the time
@@ -175,7 +188,7 @@ export function ResonanceSlot() {
                                     {formatHour(range.start)} - {formatHour(range.end)}
                                 </span>
                                 <span className="text-sm text-green-700 ml-2">
-                                    ({range.end - range.start} hours)
+                                    {t('resonanceSlotsHours', { n: getRangeDuration(range) })}
                                 </span>
                             </div>
                         ))}
@@ -200,22 +213,22 @@ export function ResonanceSlot() {
                             key={slot.hour}
                             onClick={() => handleSlotClick(slot.hour)}
                             className={`h-8 ${getSlotColor(slot.status)} relative group cursor-pointer transition-all hover:scale-110`}
-                            title={`${formatHour(slot.hour)} - ${slot.activeCount}/${timezones.length} active - Click to set time`}
+                            title={`${formatHour(slot.hour)} - ${t('resonanceSlotsActiveCount', { active: slot.activeCount, total: timezones.length })} - ${t('resonanceSlotsClickToSet')}`}
                         >
                             {/* Tooltip on hover */}
                             <div className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-10 w-48 bg-gray-900 text-white text-xs rounded py-2 px-3 shadow-lg">
                                 <div className="font-bold mb-1">{formatHour(slot.hour)}</div>
                                 <div className="text-green-300">
-                                    {slot.activeCount}/{timezones.length} active
+                                    {t('resonanceSlotsActiveCount', { active: slot.activeCount, total: timezones.length })}
                                 </div>
                                 {slot.freeTimezones.length > 0 && (
                                     <div className="text-yellow-300 mt-1">
-                                        Free: {slot.freeTimezones.map(key => t(key as any)).join(', ')}
+                                        {t('resonanceSlotsFreeList', { cities: slot.freeTimezones.map(key => t(key)).join(', ') })}
                                     </div>
                                 )}
                                 {slot.sleepingTimezones.length > 0 && (
                                     <div className="text-red-300 mt-1">
-                                        Sleeping: {slot.sleepingTimezones.map(key => t(key as any)).join(', ')}
+                                        {t('resonanceSlotsSleepingList', { cities: slot.sleepingTimezones.map(key => t(key)).join(', ') })}
                                     </div>
                                 )}
                             </div>

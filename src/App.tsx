@@ -11,14 +11,14 @@ import { getUserTimezone } from './utils/timezone';
 import { getCityByTimezone } from './utils/cityData';
 
 export function App() {
-  const { updateTime, timeState, addTimezone, timezones } = useTimezoneStore();
+  const { updateTime, timeState, addTimezone, timezones, hasAutoAddedTimezone, markTimezoneAutoAdded } = useTimezoneStore();
   const { t } = useTranslation();
 
   // Auto-detect and add user's timezone on first visit
   useEffect(() => {
-    const hasAutoAdded = sessionStorage.getItem('hasAutoAddedTimezone');
+    if (hasAutoAddedTimezone) return;
 
-    if (!hasAutoAdded && timezones.length === 0) {
+    if (timezones.length === 0) {
       const userTimezone = getUserTimezone();
       const city = getCityByTimezone(userTimezone);
 
@@ -26,11 +26,11 @@ export function App() {
         const timezone = createTimezoneFromCity(userTimezone);
         if (timezone) {
           addTimezone(timezone);
-          sessionStorage.setItem('hasAutoAddedTimezone', 'true');
         }
       }
     }
-  }, [addTimezone, timezones.length]);
+    markTimezoneAutoAdded();
+  }, [addTimezone, markTimezoneAutoAdded, hasAutoAddedTimezone, timezones.length]);
 
   useEffect(() => {
     if (!timeState.isLive) return;

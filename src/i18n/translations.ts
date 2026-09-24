@@ -59,6 +59,25 @@ export const translations: Record<Language, Record<string, string>> = {
         timezoneCardSleeping: "Sleeping",
         timezoneCardFree: "Free",
 
+        // Relative dates and time differences
+        dateTomorrow: "tomorrow",
+        dateYesterday: "yesterday",
+        dateInDays: "in {n} days",
+        dateDaysAgo: "{n} days ago",
+        diffSameTime: "Same time!",
+        diffHours: "{n} h",
+        diffMinutes: "{n} m",
+
+        // Resonance Slots details
+        resonanceSlotsHours: "({n} hours)",
+        resonanceSlotsActiveCount: "{active}/{total} active",
+        resonanceSlotsFreeList: "Free: {cities}",
+        resonanceSlotsSleepingList: "Sleeping: {cities}",
+        resonanceSlotsClickToSet: "Click to set time",
+
+        // City Search status
+        searchAdded: "(Added)",
+
         // Footer
         madeBy: "Made by Peylix",
 
@@ -296,6 +315,25 @@ export const translations: Record<Language, Record<string, string>> = {
         timezoneCardActive: "活跃时间",
         timezoneCardSleeping: "睡觉时间",
         timezoneCardFree: "空闲时间",
+
+        // Relative dates and time differences
+        dateTomorrow: "明天",
+        dateYesterday: "昨天",
+        dateInDays: "{n} 天后",
+        dateDaysAgo: "{n} 天前",
+        diffSameTime: "时间相同！",
+        diffHours: "{n} 小时",
+        diffMinutes: "{n} 分钟",
+
+        // Resonance Slots details
+        resonanceSlotsHours: "（{n} 小时）",
+        resonanceSlotsActiveCount: "{active}/{total} 活跃",
+        resonanceSlotsFreeList: "空闲：{cities}",
+        resonanceSlotsSleepingList: "睡眠：{cities}",
+        resonanceSlotsClickToSet: "点击设置时间",
+
+        // City Search status
+        searchAdded: "（已添加）",
 
         // Footer
         madeBy: "由 Peylix 制作",
