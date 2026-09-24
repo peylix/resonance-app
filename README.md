@@ -36,6 +36,13 @@ bun run build
 bun start
 ```
 
+### Tests and Type Checking
+
+```bash
+bun test
+bun run typecheck
+```
+
 ## Tech Stack
 
 - **Runtime:** Bun + TypeScript
