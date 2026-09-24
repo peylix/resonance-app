@@ -8,7 +8,6 @@ export interface Timezone {
     regionKey: string; // Key for region name
     timezone: string; // IANA timezone identifier (e.g., "America/New_York")
     offset: number; // Offset from UTC in minutes. Adaptive for DST.
-    emoji?: string; // Emoji representing the location (optional).
 }
 
 /**
@@ -27,6 +26,5 @@ export interface CityData {
     nameKey: string; // Key for city name
     timezone: string; // IANA identifier
     regionKey: string; // Key for region name
-    emoji?: string;
     searchTerms?: string[]; // Key words for searching
 }

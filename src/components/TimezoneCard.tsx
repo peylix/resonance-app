@@ -71,7 +71,6 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
             {/* city info */}
             <div className="mb-4">
                 <div className="flex items-center gap-2 mb-1">
-                    {timezone.emoji && <span className="text-2xl">{timezone.emoji}</span>}
                     <h3 className="text-xl font-bold text-gray-900">{t(timezone.cityKey as any)}</h3>
                 </div>
                 <p className="text-sm text-gray-600">{t(timezone.regionKey as any)}</p>

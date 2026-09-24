@@ -14,7 +14,7 @@ export function CitySearch() {
     const searchResults = query.trim() ? searchCities(query) : [];
 
     const handleSelectCity = (city: CityData) => {
-        const alreadyAdded = timezones.some(tz => tz.timezone === city.timezone);
+        const alreadyAdded = timezones.some(tz => tz.cityKey === city.nameKey);
         if (alreadyAdded) return;
 
         const newTimezone = {
@@ -23,7 +23,6 @@ export function CitySearch() {
             regionKey: city.regionKey,
             timezone: city.timezone,
             offset: getUtcOffset(city.timezone),
-            emoji: city.emoji
         };
 
         addTimezone(newTimezone);
@@ -65,10 +64,10 @@ export function CitySearch() {
                     {searchResults.length > 0 ? (
                         searchResults.map((city) => {
                             const alreadyAdded = timezones.some(tz =>
-                                tz.timezone === city.timezone);
+                                tz.cityKey === city.nameKey);
                             return (
                                 <button
-                                    key={city.timezone}
+                                    key={city.nameKey}
                                     onClick={() => handleSelectCity(city)}
                                     disabled={alreadyAdded}
                                     className={`w-full px-4 py-3 text-left hover:bg-gray-300/50 transition-colors border-b border-gray-700/50
@@ -76,7 +75,6 @@ export function CitySearch() {
                                         }`}
                                 >
                                     <div className="flex items-center gap-2">
-                                        {city.emoji && <span className="text-xl">{city.emoji}</span>}
                                         <div>
                                             <div className="font-semibold">
                                                 {t(city.nameKey as any)}

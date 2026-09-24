@@ -136,7 +136,6 @@ export function createTimezoneFromCity(CityName: string): Timezone | null {
         regionKey: city.regionKey,
         timezone: city.timezone,
         offset: getUtcOffset(city.timezone),
-        emoji: city.emoji,
     };
 
 }
