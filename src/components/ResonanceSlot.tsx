@@ -218,32 +218,36 @@ export function ResonanceSlot() {
                     {t('resonanceSlotsTimeline')}
                 </h3>
                 <div className="grid grid-cols-24 gap-0.5">
-                    {timeSlots.map((slot) => (
-                        <div
-                            key={slot.hour}
-                            onClick={() => handleSlotClick(slot.hour)}
-                            className={`h-8 ${getSlotColor(slot.status)} relative group cursor-pointer transition-all hover:scale-110`}
-                            title={`${formatHour(slot.hour)} - ${t('resonanceSlotsActiveCount', { active: slot.activeCount, total: timezones.length })} - ${t('resonanceSlotsClickToSet')}`}
-                        >
-                            {/* Tooltip on hover */}
-                            <div className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-10 w-48 bg-gray-900 text-white text-xs rounded py-2 px-3 shadow-lg">
-                                <div className="font-bold mb-1">{formatHour(slot.hour)}</div>
-                                <div className="text-green-300">
-                                    {t('resonanceSlotsActiveCount', { active: slot.activeCount, total: timezones.length })}
-                                </div>
-                                {slot.freeTimezones.length > 0 && (
-                                    <div className="text-yellow-300 mt-1">
-                                        {t('resonanceSlotsFreeList', { cities: slot.freeTimezones.map(key => t(key)).join(', ') })}
-                                    </div>
-                                )}
-                                {slot.sleepingTimezones.length > 0 && (
-                                    <div className="text-red-300 mt-1">
-                                        {t('resonanceSlotsSleepingList', { cities: slot.sleepingTimezones.map(key => t(key)).join(', ') })}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
+                    {timeSlots.map((slot) => {
+                        const activeText = t('resonanceSlotsActiveCount', { active: slot.activeCount, total: timezones.length });
+                        const freeText = slot.freeTimezones.length > 0
+                            ? t('resonanceSlotsFreeList', { cities: slot.freeTimezones.map(key => t(key)).join(', ') })
+                            : '';
+                        const sleepingText = slot.sleepingTimezones.length > 0
+                            ? t('resonanceSlotsSleepingList', { cities: slot.sleepingTimezones.map(key => t(key)).join(', ') })
+                            : '';
+                        const label = [formatHour(slot.hour), activeText, freeText, sleepingText, t('resonanceSlotsClickToSet')]
+                            .filter(Boolean)
+                            .join(', ');
+
+                        return (
+                            <button
+                                key={slot.hour}
+                                type="button"
+                                onClick={() => handleSlotClick(slot.hour)}
+                                aria-label={label}
+                                className={`block w-full h-8 ${getSlotColor(slot.status)} relative group cursor-pointer transition-all hover:scale-110 focus-visible:scale-110 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-gray-900 focus-visible:z-20`}
+                            >
+                                {/* Tooltip on hover or keyboard focus (the button's aria-label carries the same text) */}
+                                <span aria-hidden="true" className="hidden group-hover:block group-focus-visible:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-10 w-48 bg-gray-900 text-white text-xs text-left rounded py-2 px-3 shadow-lg">
+                                    <span className="block font-bold mb-1">{formatHour(slot.hour)}</span>
+                                    <span className="block text-green-300">{activeText}</span>
+                                    {freeText && <span className="block text-yellow-300 mt-1">{freeText}</span>}
+                                    {sleepingText && <span className="block text-red-300 mt-1">{sleepingText}</span>}
+                                </span>
+                            </button>
+                        );
+                    })}
                 </div>
                 {/* Hour labels */}
                 <div className="grid grid-cols-24 gap-0.5 mt-1">

@@ -43,15 +43,21 @@ export function CitySearch() {
                         setIsOpen(true);
                     }}
                     onFocus={() => setIsOpen(true)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Escape') setIsOpen(false);
+                    }}
+                    aria-label={t('searchLabel')}
                     placeholder={t('searchPlaceholder')}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 transition-colors"
                 />
                 {query && (
                     <button
+                        type="button"
                         onClick={() => {
                             setQuery('');
                             setIsOpen(false);
                         }}
+                        aria-label={t('ariaClearSearch')}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
                     >
                         ✕

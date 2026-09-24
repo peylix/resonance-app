@@ -89,7 +89,7 @@ export function App() {
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block text-gray-600 hover:text-gray-900 transition-colors"
-              aria-label="View on GitHub"
+              aria-label={t('ariaViewOnGithub')}
             >
               <FaGithub className="w-6 h-6" />
             </a>

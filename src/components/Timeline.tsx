@@ -1,7 +1,10 @@
 import type { Timezone } from '../types/timezone';
 import { useTimezoneStore } from '../store/timezoneStore';
 import { useRef, useState, useEffect } from 'react';
-import { getTimePercentage, getTimeFromPercentage, getHourTypes } from '../utils/timezone';
+import { getTimePercentage, getTimeFromPercentage, getHourTypes, formatTime } from '../utils/timezone';
+import { useTranslation } from '../hooks/useTranslation';
+
+const MINUTES_PER_DAY = 24 * 60;
 
 interface TimelineProps {
     timezone: Timezone;
@@ -15,6 +18,8 @@ export function Timeline({ timezone }: TimelineProps) {
     const activeEnd = useTimezoneStore((state) => state.activeEnd);
     const sleepStart = useTimezoneStore((state) => state.sleepStart);
     const sleepEnd = useTimezoneStore((state) => state.sleepEnd);
+
+    const { t } = useTranslation();
 
     const timelineRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -82,6 +87,35 @@ export function Timeline({ timezone }: TimelineProps) {
     }, [isDragging]);
 
 
+    // keyboard control: arrows move 15 minutes, Page Up/Down move 1 hour, Home/End jump to the day's edges
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        const currentMinutes = Math.round((percentage / 100) * MINUTES_PER_DAY);
+        const steps: Record<string, number> = {
+            ArrowRight: 15,
+            ArrowUp: 15,
+            ArrowLeft: -15,
+            ArrowDown: -15,
+            PageUp: 60,
+            PageDown: -60,
+        };
+
+        let targetMinutes: number;
+        if (e.key in steps) {
+            targetMinutes = currentMinutes + (steps[e.key] ?? 0);
+        } else if (e.key === 'Home') {
+            targetMinutes = 0;
+        } else if (e.key === 'End') {
+            targetMinutes = MINUTES_PER_DAY - 1;
+        } else {
+            return;
+        }
+        e.preventDefault();
+
+        targetMinutes = Math.max(0, Math.min(MINUTES_PER_DAY - 1, targetMinutes));
+        const latestTime = useTimezoneStore.getState().timeState.currentTime;
+        setCurrentTime(getTimeFromPercentage((targetMinutes / MINUTES_PER_DAY) * 100, latestTime, timezone.timezone));
+    };
+
     const hourTypes = getHourTypes(activeStart, activeEnd, sleepStart, sleepEnd);
 
     const getHourColor = (type: 'active' | 'sleeping' | 'free') => {
@@ -103,9 +137,17 @@ export function Timeline({ timezone }: TimelineProps) {
             {/* timeline container */}
             <div
                 ref={timelineRef}
-                className="relative h-12 bg-gray-800/50 rounded-lg cursor-pointer overflow-hidden touch-none select-none"
+                role="slider"
+                tabIndex={0}
+                aria-label={t('timelineLabel', { city: t(timezone.cityKey) })}
+                aria-valuemin={0}
+                aria-valuemax={MINUTES_PER_DAY - 1}
+                aria-valuenow={Math.round((percentage / 100) * MINUTES_PER_DAY)}
+                aria-valuetext={formatTime(currentTime, timezone.timezone)}
+                className="relative h-12 bg-gray-800/50 rounded-lg cursor-pointer overflow-hidden touch-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
                 onMouseDown={handleDragStart}
                 onTouchStart={handleDragStart}
+                onKeyDown={handleKeyDown}
             >
                 {/* hour segments */}
                 <div className="absolute inset-0 flex">

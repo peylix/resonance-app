@@ -151,7 +151,8 @@ export function getTimeFromPercentage(
     baseDate: Date,
     timezone: string
 ): Date {
-    const totalMinutes = (percentage / 100) * 24 * 60;
+    // round to whole minutes so repeated conversions don't drift by floating-point error
+    const totalMinutes = Math.round((percentage / 100) * 24 * 60);
     const dayStart = startOfDay(toZonedTime(baseDate, timezone));
     const localTime = addMinutes(dayStart, totalMinutes);
 

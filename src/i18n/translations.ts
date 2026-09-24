@@ -78,6 +78,15 @@ export const translations: Record<Language, Record<string, string>> = {
         // City Search status
         searchAdded: "(Added)",
 
+        // Accessibility labels
+        ariaResumeLive: "Resume live time",
+        ariaPauseLive: "Pause live time",
+        ariaClearSearch: "Clear search",
+        ariaRemoveCity: "Remove {city}",
+        ariaViewOnGithub: "View on GitHub",
+        searchLabel: "Search cities",
+        timelineLabel: "Time in {city}",
+
         // Footer
         madeBy: "Made by Peylix",
 
@@ -334,6 +343,15 @@ export const translations: Record<Language, Record<string, string>> = {
 
         // City Search status
         searchAdded: "（已添加）",
+
+        // Accessibility labels
+        ariaResumeLive: "恢复实时时间",
+        ariaPauseLive: "暂停实时时间",
+        ariaClearSearch: "清除搜索",
+        ariaRemoveCity: "移除{city}",
+        ariaViewOnGithub: "在 GitHub 上查看",
+        searchLabel: "搜索城市",
+        timelineLabel: "{city}的时间",
 
         // Footer
         madeBy: "由 Peylix 制作",

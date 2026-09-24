@@ -88,7 +88,7 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
             <button
                 onClick={() => removeTimezone(timezone.id)}
                 className="absolute top-3 right-3 text-gray-400 hover:text-red-600 transition-colors"
-                aria-label="Remove timezone"
+                aria-label={t('ariaRemoveCity', { city: t(timezone.cityKey) })}
             >
                 ✕
             </button>

@@ -1,5 +1,5 @@
 import { useTimezoneStore } from "../store/timezoneStore";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { FaPlay, FaPause, FaSun, FaMoon } from "react-icons/fa6";
 import { IoSettingsSharp, IoLanguage } from "react-icons/io5";
@@ -26,6 +26,45 @@ export function ControlPanel() {
     const [tempSleepStart, setTempSleepStart] = useState(sleepStart);
     const [tempSleepEnd, setTempSleepEnd] = useState(sleepEnd);
     const [validationError, setValidationError] = useState<string>('');
+
+    const settingsButtonRef = useRef<HTMLButtonElement>(null);
+    const dialogRef = useRef<HTMLDivElement>(null);
+    const wasSettingsOpen = useRef(false);
+
+    // Move focus into the dialog when it opens, and back to the settings button when it closes
+    useEffect(() => {
+        if (showSettings) {
+            dialogRef.current?.querySelector<HTMLElement>('input, select, button')?.focus();
+        } else if (wasSettingsOpen.current) {
+            settingsButtonRef.current?.focus();
+        }
+        wasSettingsOpen.current = showSettings;
+    }, [showSettings]);
+
+    // Close on Escape and keep Tab focus inside the dialog
+    const handleDialogKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            handleCancelSettings();
+            return;
+        }
+        if (e.key !== 'Tab' || !dialogRef.current) return;
+
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (!first || !last) return;
+
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    };
 
     const handleSaveSettings = () => {
         // Clear previous errors
@@ -71,6 +110,8 @@ export function ControlPanel() {
             {/* Live mode switch button */}
             <button
                 onClick={() => setLiveMode(!isLive)}
+                aria-label={isLive ? t('ariaPauseLive') : t('ariaResumeLive')}
+                title={isLive ? t('ariaPauseLive') : t('ariaResumeLive')}
                 className={`px-4 py-2 rounded-lg font-semibold transition-all ${isLive
                     ? 'bg-gray-600 text-gray-100 hover:bg-gray-700'
                     : 'bg-green-500 text-white shadow-lg shadow-green-500/50'
@@ -81,7 +122,11 @@ export function ControlPanel() {
 
             {/* Settings button */}
             <button
+                ref={settingsButtonRef}
                 onClick={() => setShowSettings(!showSettings)}
+                aria-label={t('settings')}
+                title={t('settings')}
+                aria-haspopup="dialog"
                 className="px-4 py-2 rounded-lg font-semibold bg-blue-200
   text-gray-700 hover:bg-blue-300 transition-all"
             >
@@ -104,20 +149,26 @@ export function ControlPanel() {
                     onClick={handleCancelSettings}
                 >
                     <div
+                        ref={dialogRef}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="settings-title"
+                        onKeyDown={handleDialogKeyDown}
                         className="bg-white rounded-lg p-6 max-w-md w-full border border-gray-300 shadow-xl"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h2 className="text-2xl font-bold mb-4 text-gray-900">{t('settings')}</h2>
+                        <h2 id="settings-title" className="text-2xl font-bold mb-4 text-gray-900">{t('settings')}</h2>
 
                         {/* Active time setting */}
-                        <div className="mb-6">
-                            <h3 className="text-lg font-semibold mb-2 text-green-600 flex items-center gap-2">
+                        <div className="mb-6" role="group" aria-labelledby="settings-active-title">
+                            <h3 id="settings-active-title" className="text-lg font-semibold mb-2 text-green-600 flex items-center gap-2">
                                 <FaSun /> {t('activeHours')}
                             </h3>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1">{t('start')}</label>
+                                    <label className="block text-sm text-gray-600 mb-1" htmlFor="settings-active-start">{t('start')}</label>
                                     <input
+                                        id="settings-active-start"
                                         type="number"
                                         min="0"
                                         max="23"
@@ -127,8 +178,9 @@ export function ControlPanel() {
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1">{t('end')}</label>
+                                    <label className="block text-sm text-gray-600 mb-1" htmlFor="settings-active-end">{t('end')}</label>
                                     <input
+                                        id="settings-active-end"
                                         type="number"
                                         min="0"
                                         max="23"
@@ -144,14 +196,15 @@ export function ControlPanel() {
                         </div>
 
                         {/* Sleep time setting */}
-                        <div className="mb-6">
-                            <h3 className="text-lg font-semibold mb-2 text-blue-600 flex items-center gap-2">
+                        <div className="mb-6" role="group" aria-labelledby="settings-sleep-title">
+                            <h3 id="settings-sleep-title" className="text-lg font-semibold mb-2 text-blue-600 flex items-center gap-2">
                                 <FaMoon /> {t('sleepHours')}
                             </h3>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1">{t('start')}</label>
+                                    <label className="block text-sm text-gray-600 mb-1" htmlFor="settings-sleep-start">{t('start')}</label>
                                     <input
+                                        id="settings-sleep-start"
                                         type="number"
                                         min="0"
                                         max="23"
@@ -161,8 +214,9 @@ export function ControlPanel() {
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1">{t('end')}</label>
+                                    <label className="block text-sm text-gray-600 mb-1" htmlFor="settings-sleep-end">{t('end')}</label>
                                     <input
+                                        id="settings-sleep-end"
                                         type="number"
                                         min="0"
                                         max="23"
@@ -182,11 +236,12 @@ export function ControlPanel() {
 
                         {/* Language selector */}
                         <div className="mb-6">
-                            <h3 className="text-lg font-semibold mb-2 text-gray-600 flex items-center gap-2">
+                            <h3 id="settings-language-title" className="text-lg font-semibold mb-2 text-gray-600 flex items-center gap-2">
                                 <IoLanguage /> {t('language')}
                             </h3>
                             <select
                                 id="language-select"
+                                aria-labelledby="settings-language-title"
                                 value={language}
                                 onChange={(e) => setLanguage(e.target.value as any)}
                                 className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded
@@ -204,7 +259,7 @@ export function ControlPanel() {
 
                         {/* Validation error message */}
                         {validationError && (
-                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                                 <p className="text-sm text-red-600">{validationError}</p>
                             </div>
                         )}
