@@ -1,12 +1,35 @@
 @import "tailwindcss";
 
+@theme {
+  /* Status colors shared by the overview bar, timelines and cards */
+  --color-active: #1f9d6b;
+  --color-free: #eab83a;
+  --color-sleep: #df6b55;
+}
+
+/* Small uppercase label used for section and field headings */
+@utility eyebrow {
+  font-size: 11px;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-neutral-500);
+}
+
 @layer base {
   :root {
-    @apply text-gray-900 bg-white font-sans antialiased;
+    @apply text-neutral-900 bg-white font-sans antialiased;
   }
 
   body {
     @apply min-w-[320px] min-h-screen m-0;
+  }
+
+  /* One square focus ring for every interactive element */
+  :focus-visible {
+    outline: 2px solid var(--color-neutral-900);
+    outline-offset: 2px;
   }
 }
 
@@ -15,5 +38,6 @@
   ::before,
   ::after {
     animation: none !important;
+    transition: none !important;
   }
 }

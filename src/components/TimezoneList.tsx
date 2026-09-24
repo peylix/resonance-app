@@ -1,6 +1,5 @@
 import { useTimezoneStore } from '../store/timezoneStore';
 import { TimezoneCardWithTimeline } from './TimezoneCardWithTimeline';
-import { FcGlobe } from "react-icons/fc";
 import { useTranslation } from '../hooks/useTranslation';
 
 export function TimezoneList() {
@@ -9,14 +8,11 @@ export function TimezoneList() {
 
     if (timezones.length === 0) {
         return (
-            <div className="flex flex-col items-center py-12 text-gray-400">
-                <div className="text-6xl mb-4">
-                    <FcGlobe size={64} />
-                </div>
-                <p className="text-xl">
+            <div className="border border-dashed border-neutral-300 px-6 py-16 text-center">
+                <p className="text-sm font-medium text-neutral-700">
                     {t('timezoneListPlaceholder')}
                 </p>
-                <p className="text-sm mt-2">
+                <p className="mt-1 text-xs text-neutral-500">
                     {t('timezoneListHint')}
                 </p>
             </div>
@@ -24,7 +20,7 @@ export function TimezoneList() {
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {timezones.map((timezone) => (
                 <TimezoneCardWithTimeline key={timezone.id} timezone={timezone} />
             ))}

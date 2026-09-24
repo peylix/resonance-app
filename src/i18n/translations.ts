@@ -69,6 +69,7 @@ export const translations: Record<Language, Record<string, string>> = {
         diffMinutes: "{n} m",
 
         // Resonance Slots details
+        resonanceSlotsHour: "(1 hour)",
         resonanceSlotsHours: "({n} hours)",
         resonanceSlotsActiveCount: "{active}/{total} active",
         resonanceSlotsFreeList: "Free: {cities}",
@@ -76,7 +77,7 @@ export const translations: Record<Language, Record<string, string>> = {
         resonanceSlotsClickToSet: "Click to set time",
 
         // City Search status
-        searchAdded: "(Added)",
+        searchAdded: "Added",
 
         // Accessibility labels
         ariaResumeLive: "Resume live time",
@@ -335,6 +336,7 @@ export const translations: Record<Language, Record<string, string>> = {
         diffMinutes: "{n} 分钟",
 
         // Resonance Slots details
+        resonanceSlotsHour: "（1 小时）",
         resonanceSlotsHours: "（{n} 小时）",
         resonanceSlotsActiveCount: "{active}/{total} 活跃",
         resonanceSlotsFreeList: "空闲：{cities}",
@@ -342,7 +344,7 @@ export const translations: Record<Language, Record<string, string>> = {
         resonanceSlotsClickToSet: "点击设置时间",
 
         // City Search status
-        searchAdded: "（已添加）",
+        searchAdded: "已添加",
 
         // Accessibility labels
         ariaResumeLive: "恢复实时时间",

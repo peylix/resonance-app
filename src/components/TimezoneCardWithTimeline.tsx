@@ -8,9 +8,11 @@ interface TimezoneCardWithTimelineProps {
 
 export function TimezoneCardWithTimeline({ timezone }: TimezoneCardWithTimelineProps) {
     return (
-        <div className="space-y-4">
+        <article className="border border-neutral-200 bg-white hover:border-neutral-400 transition-colors">
             <TimezoneCard timezone={timezone} />
-            <Timeline timezone={timezone} />
-        </div>
+            <div className="px-5 pb-5">
+                <Timeline timezone={timezone} />
+            </div>
+        </article>
     )
 }

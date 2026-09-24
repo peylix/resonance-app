@@ -121,14 +121,11 @@ export function Timeline({ timezone }: TimelineProps) {
     const getHourColor = (type: 'active' | 'sleeping' | 'free') => {
         switch (type) {
             case 'active':
-                return 'bg-green-500/30';
+                return 'bg-active/30';
             case 'sleeping':
-                return 'bg-red-500/30';
+                return 'bg-sleep/25';
             case 'free':
-                return 'bg-yellow-500/30';
-            default:
-                return 'bg=gray-500/30';
-
+                return 'bg-free/35';
         }
     };
 
@@ -144,7 +141,7 @@ export function Timeline({ timezone }: TimelineProps) {
                 aria-valuemax={MINUTES_PER_DAY - 1}
                 aria-valuenow={Math.round((percentage / 100) * MINUTES_PER_DAY)}
                 aria-valuetext={formatTime(currentTime, timezone.timezone)}
-                className="relative h-12 bg-gray-800/50 rounded-lg cursor-pointer overflow-hidden touch-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
+                className="relative h-8 cursor-pointer touch-none select-none"
                 onMouseDown={handleDragStart}
                 onTouchStart={handleDragStart}
                 onKeyDown={handleKeyDown}
@@ -154,7 +151,7 @@ export function Timeline({ timezone }: TimelineProps) {
                     {hourTypes.map((type, index) => (
                         <div
                             key={index}
-                            className={`flex-1 ${getHourColor(type)} border-r border-gray-700/50`}
+                            className={`flex-1 ${getHourColor(type)}`}
                             title={`${index}:00 - ${type}`}
                         />
                     ))}
@@ -162,21 +159,21 @@ export function Timeline({ timezone }: TimelineProps) {
 
                 {/* indicator for current time */}
                 <div
-                    className="absolute top-0 bottom-0 w-1 bg-white shadow-lg transition-all"
+                    className={`absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 bg-neutral-900 ${isDragging ? '' : 'transition-[left] duration-150'}`}
                     style={{ left: `${percentage}%` }}
+                    aria-hidden="true"
                 >
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 bg-white rounded-full shadow-lg" />
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 bg-white rounded-full shadow-lg" />
+                    <div className="absolute -top-px left-1/2 -translate-x-1/2 w-2 h-1.5 bg-neutral-900" />
                 </div>
             </div>
 
             {/* time label */}
-            <div className="flex justify-between mt-2 text-xs text-gray-400">
-                <span>0:00</span>
-                <span>6:00</span>
-                <span>12:00</span>
-                <span>18:00</span>
-                <span>24:00</span>
+            <div className="flex justify-between mt-2 text-[10px] tabular-nums text-neutral-400">
+                <span>00</span>
+                <span>06</span>
+                <span>12</span>
+                <span>18</span>
+                <span>24</span>
             </div>
         </div>
     );

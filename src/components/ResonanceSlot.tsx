@@ -4,7 +4,6 @@ import type { Timezone } from "../types/timezone";
 import { isActiveHours, isSleepHours, getHourInTimezone } from "../utils/timezone";
 import { toZonedTime } from "date-fns-tz";
 import { addHours, startOfDay } from "date-fns";
-import { FcIdea } from "react-icons/fc";
 import { useTranslation } from "../hooks/useTranslation";
 
 interface TimeSlot {
@@ -97,14 +96,14 @@ export function ResonanceSlot() {
     // If no timezones added, show placeholder
     if (timezones.length === 0) {
         return (
-            <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 border border-gray-200">
-                <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
-                    <FcIdea /> {t('resonanceSlotsTitle')}
-                </h2>
-                <p className="text-sm text-gray-600">
+            <section>
+                <header className="border-b border-neutral-900 pb-3">
+                    <h2 className="eyebrow text-neutral-900!">{t('resonanceSlotsTitle')}</h2>
+                </header>
+                <p className="mt-4 text-sm text-neutral-500">
                     {t('resonanceSlotsDescription')}
                 </p>
-            </div>
+            </section>
         );
     }
 
@@ -149,11 +148,11 @@ export function ResonanceSlot() {
     const getSlotColor = (status: TimeSlot['status']) => {
         switch (status) {
             case 'all-active':
-                return 'bg-green-500';
+                return 'bg-active';
             case 'some-free':
-                return 'bg-yellow-400';
+                return 'bg-free';
             case 'some-sleeping':
-                return 'bg-red-400';
+                return 'bg-sleep';
             default:
                 return '';
         }
@@ -176,48 +175,60 @@ export function ResonanceSlot() {
         setCurrentTime(newTime);
     };
 
+    const legend: { status: TimeSlot['status']; label: string }[] = [
+        { status: 'all-active', label: t('resonanceSlotsAllActive') },
+        { status: 'some-free', label: t('resonanceSlotsSomeFree') },
+        { status: 'some-sleeping', label: t('resonanceSlotsSomeSleeping') },
+    ];
+
     return (
-        <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 border border-gray-200">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
-                <FcIdea /> {t('resonanceSlotsTitle')}
-            </h2>
+        <section>
+            <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-neutral-900 pb-3">
+                <h2 className="eyebrow text-neutral-900!">{t('resonanceSlotsTitle')}</h2>
+
+                {/* Legend */}
+                <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-neutral-500">
+                    {legend.map(({ status, label }) => (
+                        <li key={status} className="flex items-center gap-1.5">
+                            <span className={`w-2 h-2 ${getSlotColor(status)}`} aria-hidden="true" />
+                            {label}
+                        </li>
+                    ))}
+                </ul>
+            </header>
 
             {/* Resonance Ranges Summary */}
-            {resonanceRanges.length > 0 ? (
-                <div className="mb-6">
-                    <h3 className="text-sm font-semibold text-green-700 mb-2">
-                        {t('resonanceSlotsPerfectTime')}
-                    </h3>
-                    <div className="space-y-2">
+            <div className="mt-6">
+                <h3 className="eyebrow mb-3">{t('resonanceSlotsPerfectTime')}</h3>
+                {resonanceRanges.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
                         {resonanceRanges.map((range, index) => (
                             <div
                                 key={index}
-                                className="bg-green-100 border border-green-300 rounded-lg px-4 py-2"
+                                className="border border-neutral-200 border-l-2 border-l-active px-4 py-2.5"
                             >
-                                <span className="font-mono font-bold text-green-900">
-                                    {formatHour(range.start)} - {formatHour(range.end)}
+                                <span className="text-lg font-medium tracking-tight tabular-nums">
+                                    {formatHour(range.start)}–{formatHour(range.end)}
                                 </span>
-                                <span className="text-sm text-green-700 ml-2">
-                                    {t('resonanceSlotsHours', { n: getRangeDuration(range) })}
+                                <span className="ml-3 text-xs text-neutral-500">
+                                    {getRangeDuration(range) === 1
+                                        ? t('resonanceSlotsHour')
+                                        : t('resonanceSlotsHours', { n: getRangeDuration(range) })}
                                 </span>
                             </div>
                         ))}
                     </div>
-                </div>
-            ) : (
-                <div className="mb-6 bg-yellow-100 border border-yellow-300 rounded-lg px-4 py-3">
-                    <p className="text-sm text-yellow-800">
+                ) : (
+                    <p className="border-l-2 border-free bg-neutral-50 px-4 py-2.5 text-sm text-neutral-600">
                         {t('resonanceSlotsNoPerfectTime')}
                     </p>
-                </div>
-            )}
+                )}
+            </div>
 
             {/* 24-hour Timeline */}
-            <div className="mb-4">
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                    {t('resonanceSlotsTimeline')}
-                </h3>
-                <div className="grid grid-cols-24 gap-0.5">
+            <div className="mt-8">
+                <h3 className="eyebrow mb-3">{t('resonanceSlotsTimeline')}</h3>
+                <div className="grid grid-cols-24 gap-px">
                     {timeSlots.map((slot) => {
                         const activeText = t('resonanceSlotsActiveCount', { active: slot.activeCount, total: timezones.length });
                         const freeText = slot.freeTimezones.length > 0
@@ -236,54 +247,32 @@ export function ResonanceSlot() {
                                 type="button"
                                 onClick={() => handleSlotClick(slot.hour)}
                                 aria-label={label}
-                                className={`block w-full h-8 ${getSlotColor(slot.status)} relative group cursor-pointer transition-all hover:scale-110 focus-visible:scale-110 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-gray-900 focus-visible:z-20`}
+                                className={`block w-full h-10 ${getSlotColor(slot.status)} relative group cursor-pointer hover:shadow-[inset_0_0_0_999px_rgb(255_255_255/0.3)] focus-visible:z-20`}
                             >
                                 {/* Tooltip on hover or keyboard focus (the button's aria-label carries the same text) */}
-                                <span aria-hidden="true" className="hidden group-hover:block group-focus-visible:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-10 w-48 bg-gray-900 text-white text-xs text-left rounded py-2 px-3 shadow-lg">
-                                    <span className="block font-bold mb-1">{formatHour(slot.hour)}</span>
-                                    <span className="block text-green-300">{activeText}</span>
-                                    {freeText && <span className="block text-yellow-300 mt-1">{freeText}</span>}
-                                    {sleepingText && <span className="block text-red-300 mt-1">{sleepingText}</span>}
+                                <span aria-hidden="true" className="hidden group-hover:block group-focus-visible:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-10 w-48 bg-neutral-900 text-white text-xs text-left py-2 px-3">
+                                    <span className="block font-medium tabular-nums mb-1">{formatHour(slot.hour)}</span>
+                                    <span className="block text-neutral-300">{activeText}</span>
+                                    {freeText && <span className="block text-neutral-300 mt-1">{freeText}</span>}
+                                    {sleepingText && <span className="block text-neutral-300 mt-1">{sleepingText}</span>}
                                 </span>
                             </button>
                         );
                     })}
                 </div>
                 {/* Hour labels */}
-                <div className="grid grid-cols-24 gap-0.5 mt-1">
+                <div className="grid grid-cols-24 gap-px mt-1.5">
                     {[0, 6, 12, 18].map(hour => (
                         <div
                             key={hour}
-                            className="text-xs text-gray-600 text-center"
+                            className="text-[10px] tabular-nums text-neutral-400"
                             style={{ gridColumn: `${hour + 1} / span 1` }}
                         >
-                            {hour}
+                            {hour.toString().padStart(2, '0')}
                         </div>
                     ))}
                 </div>
             </div>
-
-            {/* Legend */}
-            <div className="flex flex-wrap gap-4 text-xs">
-                <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-green-500 rounded"></div>
-                    <span className="text-gray-700">
-                        {t('resonanceSlotsAllActive')}
-                    </span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-yellow-400 rounded"></div>
-                    <span className="text-gray-700">
-                        {t('resonanceSlotsSomeFree')}
-                    </span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-red-400 rounded"></div>
-                    <span className="text-gray-700">
-                        {t('resonanceSlotsSomeSleeping')}
-                    </span>
-                </div>
-            </div>
-        </div>
+        </section>
     );
 }

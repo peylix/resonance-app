@@ -43,60 +43,52 @@ export function App() {
   }, [tick]);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 flex flex-col">
+    <div className="min-h-screen bg-white text-neutral-900 flex flex-col">
       {/* sidebar */}
-      <div className="lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-96 lg:border-r lg:border-gray-200 lg:bg-gray-50 lg:overflow-y-auto">
-        <div className="p-6 lg:p-8">
+      <aside className="border-b border-neutral-200 lg:border-b-0 lg:border-r lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-80 lg:overflow-y-auto">
+        <div className="px-6 py-8 lg:px-8 lg:py-10 space-y-8">
           {/* header */}
-          <header className="mb-8">
-            <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-gray-900">
+          <header>
+            <h1 className="text-2xl font-semibold tracking-tight">
               {t('appTitle')}
             </h1>
-            <p className="text-gray-600 text-sm lg:text-base">
+            <p className="mt-2 text-sm leading-relaxed text-neutral-500">
               {t('appSubtitle')}
             </p>
           </header>
 
           {/* control panel */}
-          <div className="mb-6">
-            <ControlPanel />
-          </div>
+          <ControlPanel />
 
           {/* search cities */}
-          <div className="mb-8">
-            <CitySearch />
-          </div>
+          <CitySearch />
         </div>
-      </div>
+      </aside>
 
       {/* right side */}
-      <div className="lg:ml-96 p-6 lg:p-8 flex-1 flex flex-col">
-        <div className="flex-1">
+      <main className="lg:ml-80 flex-1 flex flex-col px-6 py-8 lg:px-10 lg:py-10">
+        <div className="flex-1 space-y-12">
           {/* Resonance Slots */}
-          <div className="mb-8">
-            <ResonanceSlot />
-          </div>
+          <ResonanceSlot />
 
           {/* Timezone Cards */}
           <TimezoneList />
         </div>
 
         {/* Footer */}
-        <footer className="mt-12 pt-8 border-t border-gray-200 text-center">
-          <div className="flex items-center justify-center gap-3">
-            <a
-              href="https://github.com/peylix/resonance-app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block text-gray-600 hover:text-gray-900 transition-colors"
-              aria-label={t('ariaViewOnGithub')}
-            >
-              <FaGithub className="w-6 h-6" />
-            </a>
-            <p className="text-sm text-gray-600">{t('madeBy')}</p>
-          </div>
+        <footer className="mt-16 pt-5 border-t border-neutral-200 flex items-center justify-between text-xs text-neutral-500">
+          <p>{t('madeBy')}</p>
+          <a
+            href="https://github.com/peylix/resonance-app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-neutral-400 hover:text-neutral-900 transition-colors"
+            aria-label={t('ariaViewOnGithub')}
+          >
+            <FaGithub className="w-4 h-4" />
+          </a>
         </footer>
-      </div>
+      </main>
     </div>
   );
 }

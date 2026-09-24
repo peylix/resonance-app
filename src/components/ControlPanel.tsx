@@ -1,8 +1,8 @@
 import { useTimezoneStore } from "../store/timezoneStore";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { FaPlay, FaPause, FaSun, FaMoon } from "react-icons/fa6";
-import { IoSettingsSharp, IoLanguage } from "react-icons/io5";
+import { FaPlay, FaPause } from "react-icons/fa6";
+import { IoSettingsOutline, IoChevronDown } from "react-icons/io5";
 import { useTranslation } from "../hooks/useTranslation";
 import { languages } from '../i18n/translations';
 
@@ -105,19 +105,22 @@ export function ControlPanel() {
         setShowSettings(false);
     };
 
+    const inputClass = "w-full h-9 px-3 border border-neutral-300 bg-white text-sm tabular-nums focus:outline-none focus:border-neutral-900 transition-colors";
+    const iconButtonClass = "w-10 h-10 flex items-center justify-center border transition-colors";
+
     return (
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-2">
             {/* Live mode switch button */}
             <button
                 onClick={() => setLiveMode(!isLive)}
                 aria-label={isLive ? t('ariaPauseLive') : t('ariaResumeLive')}
                 title={isLive ? t('ariaPauseLive') : t('ariaResumeLive')}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all ${isLive
-                    ? 'bg-gray-600 text-gray-100 hover:bg-gray-700'
-                    : 'bg-green-500 text-white shadow-lg shadow-green-500/50'
+                className={`${iconButtonClass} ${isLive
+                    ? 'border-neutral-300 text-neutral-700 hover:border-neutral-900 hover:text-neutral-900'
+                    : 'border-neutral-900 bg-neutral-900 text-white hover:bg-neutral-700'
                     }`}
             >
-                {isLive ? <FaPause size={20} /> : <FaPlay size={20} />}
+                {isLive ? <FaPause size={13} /> : <FaPlay size={13} />}
             </button>
 
             {/* Settings button */}
@@ -127,25 +130,24 @@ export function ControlPanel() {
                 aria-label={t('settings')}
                 title={t('settings')}
                 aria-haspopup="dialog"
-                className="px-4 py-2 rounded-lg font-semibold bg-blue-200
-  text-gray-700 hover:bg-blue-300 transition-all"
+                className={`${iconButtonClass} border-neutral-300 text-neutral-700 hover:border-neutral-900 hover:text-neutral-900`}
             >
-                <IoSettingsSharp size={20} />
+                <IoSettingsOutline size={17} />
             </button>
 
             {/* Current time display */}
-            <div className="text-sm text-gray-400">
-                {t('currentTime')}: {' '}
-                <span className="font-mono text-gray-600">
+            <div className="ml-3 leading-tight">
+                <div className="eyebrow">{t('currentTime')}</div>
+                <div className="text-sm font-medium tabular-nums">
                     {/* use 24-hour format */}
                     {currentRealTime.toLocaleTimeString('en-GB', { hour12: false })}
-                </span>
+                </div>
             </div>
 
             {/* Settings Modal */}
             {showSettings && createPortal(
                 <div
-                    className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4"
+                    className="fixed inset-0 bg-neutral-900/40 flex items-center justify-center z-[9999] p-4"
                     onClick={handleCancelSettings}
                 >
                     <div
@@ -154,19 +156,19 @@ export function ControlPanel() {
                         aria-modal="true"
                         aria-labelledby="settings-title"
                         onKeyDown={handleDialogKeyDown}
-                        className="bg-white rounded-lg p-6 max-w-md w-full border border-gray-300 shadow-xl"
+                        className="bg-white w-full max-w-sm border border-neutral-900 p-6"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h2 id="settings-title" className="text-2xl font-bold mb-4 text-gray-900">{t('settings')}</h2>
+                        <h2 id="settings-title" className="text-lg font-semibold tracking-tight mb-6">{t('settings')}</h2>
 
                         {/* Active time setting */}
                         <div className="mb-6" role="group" aria-labelledby="settings-active-title">
-                            <h3 id="settings-active-title" className="text-lg font-semibold mb-2 text-green-600 flex items-center gap-2">
-                                <FaSun /> {t('activeHours')}
+                            <h3 id="settings-active-title" className="eyebrow mb-3 flex items-center gap-2">
+                                <span className="w-2 h-2 bg-active" aria-hidden="true" /> {t('activeHours')}
                             </h3>
-                            <div className="flex items-center gap-4">
-                                <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1" htmlFor="settings-active-start">{t('start')}</label>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs text-neutral-500 mb-1" htmlFor="settings-active-start">{t('start')}</label>
                                     <input
                                         id="settings-active-start"
                                         type="number"
@@ -174,11 +176,11 @@ export function ControlPanel() {
                                         max="23"
                                         value={tempActiveStart}
                                         onChange={(e) => setTempActiveStart(parseInt(e.target.value))}
-                                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-gray-900"
+                                        className={inputClass}
                                     />
                                 </div>
-                                <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1" htmlFor="settings-active-end">{t('end')}</label>
+                                <div>
+                                    <label className="block text-xs text-neutral-500 mb-1" htmlFor="settings-active-end">{t('end')}</label>
                                     <input
                                         id="settings-active-end"
                                         type="number"
@@ -186,23 +188,20 @@ export function ControlPanel() {
                                         max="23"
                                         value={tempActiveEnd}
                                         onChange={(e) => setTempActiveEnd(parseInt(e.target.value))}
-                                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-gray-900"
+                                        className={inputClass}
                                     />
                                 </div>
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">
-                                {tempActiveStart}:00 - {tempActiveEnd}:00
-                            </p>
                         </div>
 
                         {/* Sleep time setting */}
                         <div className="mb-6" role="group" aria-labelledby="settings-sleep-title">
-                            <h3 id="settings-sleep-title" className="text-lg font-semibold mb-2 text-blue-600 flex items-center gap-2">
-                                <FaMoon /> {t('sleepHours')}
+                            <h3 id="settings-sleep-title" className="eyebrow mb-3 flex items-center gap-2">
+                                <span className="w-2 h-2 bg-sleep" aria-hidden="true" /> {t('sleepHours')}
                             </h3>
-                            <div className="flex items-center gap-4">
-                                <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1" htmlFor="settings-sleep-start">{t('start')}</label>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs text-neutral-500 mb-1" htmlFor="settings-sleep-start">{t('start')}</label>
                                     <input
                                         id="settings-sleep-start"
                                         type="number"
@@ -210,11 +209,11 @@ export function ControlPanel() {
                                         max="23"
                                         value={tempSleepStart}
                                         onChange={(e) => setTempSleepStart(parseInt(e.target.value))}
-                                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900"
+                                        className={inputClass}
                                     />
                                 </div>
-                                <div className="flex-1">
-                                    <label className="block text-sm text-gray-600 mb-1" htmlFor="settings-sleep-end">{t('end')}</label>
+                                <div>
+                                    <label className="block text-xs text-neutral-500 mb-1" htmlFor="settings-sleep-end">{t('end')}</label>
                                     <input
                                         id="settings-sleep-end"
                                         type="number"
@@ -222,61 +221,59 @@ export function ControlPanel() {
                                         max="23"
                                         value={tempSleepEnd}
                                         onChange={(e) => setTempSleepEnd(parseInt(e.target.value))}
-                                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-900"
+                                        className={inputClass}
                                     />
                                 </div>
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">
-                                {tempSleepStart}:00 - {tempSleepEnd}:00
-                            </p>
                         </div>
 
-                        {/* Divider */}
-                        <div className="my-6 border-t border-gray-200"></div>
-
                         {/* Language selector */}
-                        <div className="mb-6">
-                            <h3 id="settings-language-title" className="text-lg font-semibold mb-2 text-gray-600 flex items-center gap-2">
-                                <IoLanguage /> {t('language')}
+                        <div className="pt-6 mb-6 border-t border-neutral-200">
+                            <h3 id="settings-language-title" className="eyebrow mb-3">
+                                {t('language')}
                             </h3>
-                            <select
-                                id="language-select"
-                                aria-labelledby="settings-language-title"
-                                value={language}
-                                onChange={(e) => setLanguage(e.target.value as any)}
-                                className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded
-                                           text-gray-700 hover:border-gray-400 focus:outline-none
-                                           focus:border-blue-500 focus:ring-1 focus:ring-blue-500
-                                           cursor-pointer transition-all"
-                            >
-                                {languages.map((lang) => (
-                                    <option key={lang.code} value={lang.code}>
-                                        {lang.nativeName}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    id="language-select"
+                                    aria-labelledby="settings-language-title"
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value as any)}
+                                    className="w-full h-9 pl-3 pr-9 appearance-none border border-neutral-300 bg-white text-sm cursor-pointer focus:outline-none focus:border-neutral-900 transition-colors"
+                                >
+                                    {languages.map((lang) => (
+                                        <option key={lang.code} value={lang.code}>
+                                            {lang.nativeName}
+                                        </option>
+                                    ))}
+                                </select>
+                                <IoChevronDown
+                                    aria-hidden="true"
+                                    size={14}
+                                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500"
+                                />
+                            </div>
                         </div>
 
                         {/* Validation error message */}
                         {validationError && (
-                            <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                                <p className="text-sm text-red-600">{validationError}</p>
+                            <div role="alert" className="mb-4 border-l-2 border-sleep bg-neutral-50 px-3 py-2">
+                                <p className="text-sm text-neutral-700">{validationError}</p>
                             </div>
                         )}
 
                         {/* Action buttons */}
-                        <div className="flex gap-3">
-                            <button
-                                onClick={handleSaveSettings}
-                                className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-                            >
-                                {t('save')}
-                            </button>
+                        <div className="flex gap-2">
                             <button
                                 onClick={handleCancelSettings}
-                                className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                                className="flex-1 h-10 border border-neutral-300 text-sm font-medium hover:border-neutral-900 transition-colors"
                             >
                                 {t('cancel')}
+                            </button>
+                            <button
+                                onClick={handleSaveSettings}
+                                className="flex-1 h-10 bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-700 transition-colors"
+                            >
+                                {t('save')}
                             </button>
                         </div>
                     </div>

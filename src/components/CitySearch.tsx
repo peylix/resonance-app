@@ -4,6 +4,7 @@ import { searchCities } from '../utils/cityData';
 import type { CityData } from '../types/timezone';
 import { getUtcOffset } from '../utils/timezone';
 import { useTranslation } from '../hooks/useTranslation';
+import { IoSearch, IoClose } from 'react-icons/io5';
 
 export function CitySearch() {
     const [query, setQuery] = useState('');
@@ -32,9 +33,14 @@ export function CitySearch() {
     };
 
     return (
-        <div className="relative w-full max-w-md">
-            {/* search box */}
-            <div className="relative">
+        <div className="relative w-full">
+            {/* search box (above the click-outside overlay so it stays clickable) */}
+            <div className="relative z-10">
+                <IoSearch
+                    aria-hidden="true"
+                    size={15}
+                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                />
                 <input
                     type="text"
                     value={query}
@@ -48,7 +54,7 @@ export function CitySearch() {
                     }}
                     aria-label={t('searchLabel')}
                     placeholder={t('searchPlaceholder')}
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 transition-colors"
+                    className="w-full h-10 pl-9 pr-10 border border-neutral-300 bg-white text-sm placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
                 />
                 {query && (
                     <button
@@ -58,16 +64,16 @@ export function CitySearch() {
                             setIsOpen(false);
                         }}
                         aria-label={t('ariaClearSearch')}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
+                        className="absolute right-0 top-0 w-10 h-10 flex items-center justify-center text-neutral-400 hover:text-neutral-900"
                     >
-                        ✕
+                        <IoClose size={16} />
                     </button>
                 )}
             </div>
 
             {/* list of search results */}
             {isOpen && query.trim() && (
-                <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-xl max-h-64 overflow-y-auto">
+                <div className="absolute z-10 w-full -mt-px bg-white border border-neutral-900 max-h-72 overflow-y-auto">
                     {searchResults.length > 0 ? (
                         searchResults.map((city) => {
                             const alreadyAdded = timezones.some(tz =>
@@ -77,24 +83,18 @@ export function CitySearch() {
                                     key={city.nameKey}
                                     onClick={() => handleSelectCity(city)}
                                     disabled={alreadyAdded}
-                                    className={`w-full px-4 py-3 text-left hover:bg-gray-300/50 transition-colors border-b border-gray-700/50
-                                                last:border-b-0 ${alreadyAdded ? 'opacity-50 cursor-not-allowed' : ''
-                                        }`}
+                                    className="w-full px-3 py-2.5 flex items-center justify-between gap-3 text-left border-b border-neutral-100 last:border-b-0 hover:bg-neutral-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <div>
-                                            <div className="font-semibold">
-                                                {t(city.nameKey as any)}
-                                                {alreadyAdded && <span className="ml-2 text-xs text-gray-400">{t('searchAdded')}</span>}
-                                            </div>
-                                            <div className="text-sm text-gray-400">{t(city.regionKey as any)}</div>
-                                        </div>
-                                    </div>
+                                    <span className="min-w-0">
+                                        <span className="block text-sm font-medium truncate">{t(city.nameKey)}</span>
+                                        <span className="block text-xs text-neutral-500 truncate">{t(city.regionKey)}</span>
+                                    </span>
+                                    {alreadyAdded && <span className="eyebrow shrink-0">{t('searchAdded')}</span>}
                                 </button>
                             );
                         })
                     ) : (
-                        <div className="px-4 py-3 text-gray-400 text-center">
+                        <div className="px-3 py-3 text-sm text-neutral-500">
                             {t('searchNoResults')}
                         </div>
                     )}
@@ -109,11 +109,5 @@ export function CitySearch() {
                 />
             )}
         </div>
-
-
     );
-
-
-
-
 }

@@ -2,7 +2,7 @@ import type { Timezone } from '../types/timezone';
 import { useTimezoneStore } from '../store/timezoneStore';
 import { formatTime, getDayDifference, getTimeDifference, getHourInTimezone } from '../utils/timezone';
 import { isActiveHours, isSleepHours } from '../utils/timezone';
-import { FaSun, FaMoon, FaStar } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
 import { useTranslation } from '../hooks/useTranslation';
 
 
@@ -50,74 +50,49 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
 
     const dateLabel = getDateLabel();
 
-    const getTimeColor = () => {
-        if (isActiveHours(hour, activeStart, activeEnd)) {
-            return 'border-gray-900 bg-gray-50'; // active time
-        }
-        if (isSleepHours(hour, sleepStart, sleepEnd)) {
-            return 'border-gray-400 bg-gray-100'; // sleep time
-        }
-        return 'border-gray-600 bg-white'; // free time
-    };
-
-    const getTimeLabel = () => {
-        if (isActiveHours(hour, activeStart, activeEnd)) {
-            return (
-                <span className="flex items-center gap-1">
-                    <FaSun /> {t('timezoneCardActive')}
-                </span>
-            );
-        }
-        if (isSleepHours(hour, sleepStart, sleepEnd)) {
-            return (
-                <span className="flex items-center gap-1">
-                    <FaMoon /> {t('timezoneCardSleeping')}
-                </span>
-            );
-        }
-        return (
-            <span className="flex items-center gap-1">
-                <FaStar /> {t('timezoneCardFree')}
-            </span>
-        );
-    };
+    // Current status of this city: color swatch and label
+    const status = isActiveHours(hour, activeStart, activeEnd)
+        ? { color: 'bg-active', label: t('timezoneCardActive') }
+        : isSleepHours(hour, sleepStart, sleepEnd)
+            ? { color: 'bg-sleep', label: t('timezoneCardSleeping') }
+            : { color: 'bg-free', label: t('timezoneCardFree') };
 
     return (
-        <div className={`relative rounded-lg border-2 p-6 transition-all duration-300 hover:shadow-xl ${getTimeColor()}`}>
-            {/* delete button */}
-            <button
-                onClick={() => removeTimezone(timezone.id)}
-                className="absolute top-3 right-3 text-gray-400 hover:text-red-600 transition-colors"
-                aria-label={t('ariaRemoveCity', { city: t(timezone.cityKey) })}
-            >
-                ✕
-            </button>
+        <div className="relative">
+            {/* status bar */}
+            <div className={`h-0.5 ${status.color}`} aria-hidden="true" />
 
-            {/* city info */}
-            <div className="mb-4">
-                <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-xl font-bold text-gray-900">{t(timezone.cityKey as any)}</h3>
+            <div className="p-5">
+                {/* city info and delete button */}
+                <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                        <h3 className="text-base font-semibold tracking-tight truncate">{t(timezone.cityKey)}</h3>
+                        <p className="text-xs text-neutral-500 truncate">{t(timezone.regionKey)}</p>
+                    </div>
+                    <button
+                        onClick={() => removeTimezone(timezone.id)}
+                        className="-mr-2 -mt-1.5 w-8 h-8 shrink-0 flex items-center justify-center text-neutral-400 hover:text-neutral-900 transition-colors"
+                        aria-label={t('ariaRemoveCity', { city: t(timezone.cityKey) })}
+                    >
+                        <IoClose size={16} />
+                    </button>
                 </div>
-                <p className="text-sm text-gray-600">{t(timezone.regionKey as any)}</p>
-            </div>
 
-            {/* time display */}
-            <div className="mb-3">
-                <div className="text-4xl font-mono font-bold mb-1 text-gray-900">{time}</div>
-                <div className="flex items-center gap-2">
-                    {dateLabel && (
-                        <span className="text-sm text-gray-600 italic">{dateLabel}</span>
-                    )}
-                    <span className="text-xs px-2 py-1 rounded bg-gray-200 text-gray-700">
-                        {getTimeLabel()}
+                {/* time display */}
+                <div className="mt-6 text-5xl font-light tracking-tight tabular-nums leading-none">{time}</div>
+
+                {/* status, date and time difference */}
+                <div className="mt-4 flex items-center justify-between gap-3 text-xs">
+                    <span className="flex items-center gap-1.5 font-medium uppercase tracking-[0.14em] text-neutral-700">
+                        <span className={`w-2 h-2 ${status.color}`} aria-hidden="true" />
+                        {status.label}
+                    </span>
+                    <span className="text-neutral-500 tabular-nums text-right">
+                        {dateLabel && <span className="italic">{dateLabel} · </span>}
+                        {getTimeDiffLabel()}
                     </span>
                 </div>
             </div>
-
-            {/* time difference display */}
-            <div className="text-sm text-gray-600">
-                {getTimeDiffLabel()}
-            </div>
         </div>
     );
-};
+}
