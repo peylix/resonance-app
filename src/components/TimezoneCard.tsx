@@ -1,6 +1,6 @@
 import type { Timezone } from '../types/timezone';
 import { useTimezoneStore } from '../store/timezoneStore';
-import { formatTime, getDayDifference, getTimeDifference } from '../utils/timezone';
+import { formatTime, getDayDifference, getTimeDifference, getHourInTimezone } from '../utils/timezone';
 import { isActiveHours, isSleepHours } from '../utils/timezone';
 import { FaSun, FaMoon, FaStar } from "react-icons/fa6";
 import { useTranslation } from '../hooks/useTranslation';
@@ -23,7 +23,7 @@ export function TimezoneCard({ timezone }: TimezoneCardProps) {
     const time = formatTime(currentTime, timezone.timezone);
     const dayDiff = getDayDifference(currentTime, timezone.timezone, referenceTimezone);
     const diffMinutes = getTimeDifference(timezone.timezone, referenceTimezone, currentTime);
-    const hour = new Date(currentTime.toLocaleString('en-US', { timeZone: timezone.timezone })).getHours();
+    const hour = getHourInTimezone(currentTime, timezone.timezone);
 
     const getDateLabel = () => {
         if (dayDiff === 0) return '';

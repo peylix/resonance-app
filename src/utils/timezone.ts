@@ -1,4 +1,4 @@
-import { toZonedTime, formatInTimeZone, fromZonedTime } from 'date-fns-tz';
+import { toZonedTime, formatInTimeZone, fromZonedTime, getTimezoneOffset } from 'date-fns-tz';
 import { differenceInMinutes, differenceInCalendarDays, addMinutes, startOfDay } from 'date-fns';
 
 /**
@@ -174,9 +174,16 @@ export function getUserTimezone(): string {
  * @returns offset from UTC in minutes
  */
 export function getUtcOffset(timezone: string, date: Date = new Date()): number {
-    const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
-    const tzDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
+    return getTimezoneOffset(timezone, date) / (1000 * 60);
+}
 
-    return (tzDate.getTime() - utcDate.getTime()) / (1000 * 60);
+/**
+ * Get the hour of a moment in a given timezone
+ * @param date - the moment to check
+ * @param timezone - IANA identifier
+ * @returns hour (0-23)
+ */
+export function getHourInTimezone(date: Date, timezone: string): number {
+    return Number(formatInTimeZone(date, timezone, 'H'));
 }
 

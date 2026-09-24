@@ -9,6 +9,7 @@ interface TimezoneStore {
     // states
     timezones: Timezone[];
     timeState: TimeState;
+    now: Date; // real wall-clock time, updated every second regardless of live mode
     referenceTimezone: string;
 
     // language
@@ -31,7 +32,7 @@ interface TimezoneStore {
     // time state operations
     setCurrentTime: (time: Date) => void;
     setLiveMode: (isLive: boolean) => void;
-    updateTime: () => void;
+    tick: () => void;
 
     // language operations
     setLanguage: (language: Language) => void;
@@ -48,6 +49,7 @@ export const useTimezoneStore = create<TimezoneStore>()(persist((set, get) => ({
         currentTime: new Date(),
         isLive: true,
     },
+    now: new Date(),
 
     referenceTimezone: getUserTimezone(),
 
@@ -96,15 +98,19 @@ export const useTimezoneStore = create<TimezoneStore>()(persist((set, get) => ({
 
     },
 
-    updateTime: () => {
+    tick: () => {
+        const now = new Date();
         const { timeState } = get();
         if (timeState.isLive) {
             set({
+                now,
                 timeState: {
                     ...timeState,
-                    currentTime: new Date(),
+                    currentTime: now,
                 },
             });
+        } else {
+            set({ now });
         }
     },
 

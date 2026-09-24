@@ -11,14 +11,18 @@ import { getUserTimezone } from './utils/timezone';
 import { getCityByTimezone } from './utils/cityData';
 
 export function App() {
-  const { updateTime, timeState, addTimezone, timezones, hasAutoAddedTimezone, markTimezoneAutoAdded } = useTimezoneStore();
+  const tick = useTimezoneStore((state) => state.tick);
+  const addTimezone = useTimezoneStore((state) => state.addTimezone);
+  const timezoneCount = useTimezoneStore((state) => state.timezones.length);
+  const hasAutoAddedTimezone = useTimezoneStore((state) => state.hasAutoAddedTimezone);
+  const markTimezoneAutoAdded = useTimezoneStore((state) => state.markTimezoneAutoAdded);
   const { t } = useTranslation();
 
   // Auto-detect and add user's timezone on first visit
   useEffect(() => {
     if (hasAutoAddedTimezone) return;
 
-    if (timezones.length === 0) {
+    if (timezoneCount === 0) {
       const userTimezone = getUserTimezone();
       const city = getCityByTimezone(userTimezone);
 
@@ -30,17 +34,13 @@ export function App() {
       }
     }
     markTimezoneAutoAdded();
-  }, [addTimezone, markTimezoneAutoAdded, hasAutoAddedTimezone, timezones.length]);
+  }, [addTimezone, markTimezoneAutoAdded, hasAutoAddedTimezone, timezoneCount]);
 
+  // Single clock for the app: updates the real time, and the displayed time when live
   useEffect(() => {
-    if (!timeState.isLive) return;
-
-    const interval = setInterval(() => {
-      updateTime();
-    }, 1000);
-
+    const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [timeState.isLive, updateTime]);
+  }, [tick]);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 flex flex-col">

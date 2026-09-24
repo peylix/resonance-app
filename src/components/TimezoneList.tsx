@@ -4,7 +4,7 @@ import { FcGlobe } from "react-icons/fc";
 import { useTranslation } from '../hooks/useTranslation';
 
 export function TimezoneList() {
-    const { timezones } = useTimezoneStore();
+    const timezones = useTimezoneStore((state) => state.timezones);
     const { t } = useTranslation();
 
     if (timezones.length === 0) {

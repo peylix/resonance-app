@@ -8,7 +8,8 @@ import { useTranslation } from '../hooks/useTranslation';
 export function CitySearch() {
     const [query, setQuery] = useState('');
     const [isOpen, setIsOpen] = useState(false);
-    const { addTimezone, timezones } = useTimezoneStore();
+    const addTimezone = useTimezoneStore((state) => state.addTimezone);
+    const timezones = useTimezoneStore((state) => state.timezones);
     const { t } = useTranslation();
 
     const searchResults = query.trim() ? searchCities(query) : [];

@@ -1,5 +1,7 @@
 import { useTimezoneStore } from "../store/timezoneStore";
-import { isActiveHours, isSleepHours } from "../utils/timezone";
+import { useMemo } from "react";
+import type { Timezone } from "../types/timezone";
+import { isActiveHours, isSleepHours, getHourInTimezone } from "../utils/timezone";
 import { toZonedTime } from "date-fns-tz";
 import { addHours, startOfDay } from "date-fns";
 import { FcIdea } from "react-icons/fc";
@@ -13,6 +15,65 @@ interface TimeSlot {
     activeCount: number; // Number of timezones in active hours
 }
 
+/**
+ * Classify each hour of the reference day by how many timezones are active, free or sleeping.
+ * @param dayStart - start of the day in the reference timezone (ms timestamp)
+ */
+function calculateResonanceSlots(
+    timezones: Timezone[],
+    dayStart: number,
+    activeStart: number,
+    activeEnd: number,
+    sleepStart: number,
+    sleepEnd: number
+): TimeSlot[] {
+    const slots: TimeSlot[] = [];
+
+    // Iterate through 24 hours
+    for (let hour = 0; hour < 24; hour++) {
+        const freeTimezones: string[] = [];
+        const sleepingTimezones: string[] = [];
+        let activeCount = 0;
+
+        // Calculate the absolute time for this hour in reference timezone
+        const timeAtHour = addHours(dayStart, hour);
+
+        // Check each timezone at this hour
+        timezones.forEach(tz => {
+            // Convert this absolute moment to the target timezone's hour
+            const tzHour = getHourInTimezone(timeAtHour, tz.timezone);
+
+            if (isActiveHours(tzHour, activeStart, activeEnd)) {
+                activeCount++;
+            } else if (isSleepHours(tzHour, sleepStart, sleepEnd)) {
+                sleepingTimezones.push(tz.cityKey);
+            } else {
+                freeTimezones.push(tz.cityKey);
+            }
+        });
+
+        // Determine status
+        let status: TimeSlot['status'];
+        if (activeCount === timezones.length) {
+            status = 'all-active';
+        } else if (sleepingTimezones.length > 0) {
+            status = 'some-sleeping';
+        } else {
+            status = 'some-free';
+        }
+
+        slots.push({
+            hour,
+            status,
+            freeTimezones,
+            sleepingTimezones,
+            activeCount
+        });
+    }
+
+    return slots;
+}
+
 export function ResonanceSlot() {
     const timezones = useTimezoneStore((state) => state.timezones);
     const currentTime = useTimezoneStore((state) => state.timeState.currentTime);
@@ -24,6 +85,14 @@ export function ResonanceSlot() {
     const setCurrentTime = useTimezoneStore((state) => state.setCurrentTime);
 
     const { t } = useTranslation();
+
+    // Get the start of the current day in the reference timezone.
+    // Slots only change when the day (or settings) change, not every live tick.
+    const dayStart = startOfDay(toZonedTime(currentTime, referenceTimezone)).getTime();
+    const timeSlots = useMemo(
+        () => calculateResonanceSlots(timezones, dayStart, activeStart, activeEnd, sleepStart, sleepEnd),
+        [timezones, dayStart, activeStart, activeEnd, sleepStart, sleepEnd]
+    );
 
     // If no timezones added, show placeholder
     if (timezones.length === 0) {
@@ -39,62 +108,6 @@ export function ResonanceSlot() {
         );
     }
 
-    // Calculate time slots for the current day
-    const calculateResonanceSlots = (): TimeSlot[] => {
-        const slots: TimeSlot[] = [];
-
-        // Get the base date in reference timezone at start of day
-        // This serves as the anchor point for hour calculations
-        const baseDate = startOfDay(toZonedTime(currentTime, referenceTimezone));
-
-        // Iterate through 24 hours
-        for (let hour = 0; hour < 24; hour++) {
-            const freeTimezones: string[] = [];
-            const sleepingTimezones: string[] = [];
-            let activeCount = 0;
-
-            // Calculate the absolute time for this hour in reference timezone
-            const timeAtHour = addHours(baseDate, hour);
-
-            // Check each timezone at this hour
-            timezones.forEach(tz => {
-                // Convert this absolute moment to the target timezone's hour
-                const tzHour = new Date(
-                    timeAtHour.toLocaleString('en-US', { timeZone: tz.timezone })
-                ).getHours();
-
-                if (isActiveHours(tzHour, activeStart, activeEnd)) {
-                    activeCount++;
-                } else if (isSleepHours(tzHour, sleepStart, sleepEnd)) {
-                    sleepingTimezones.push(tz.cityKey);
-                } else {
-                    freeTimezones.push(tz.cityKey);
-                }
-            });
-
-            // Determine status
-            let status: TimeSlot['status'];
-            if (activeCount === timezones.length) {
-                status = 'all-active';
-            } else if (sleepingTimezones.length > 0) {
-                status = 'some-sleeping';
-            } else {
-                status = 'some-free';
-            }
-
-            slots.push({
-                hour,
-                status,
-                freeTimezones,
-                sleepingTimezones,
-                activeCount
-            });
-        }
-
-        return slots;
-    };
-
-    const timeSlots = calculateResonanceSlots();
 
     // Find continuous resonance slots (all active)
     const findResonanceRanges = () => {
@@ -157,11 +170,8 @@ export function ResonanceSlot() {
 
     // Handle clicking on a time slot to set the time
     const handleSlotClick = (hour: number) => {
-        // Get the base date in reference timezone at start of day
-        const baseDate = startOfDay(toZonedTime(currentTime, referenceTimezone));
-
-        // Set the time to the clicked hour
-        const newTime = addHours(baseDate, hour);
+        // Set the time to the clicked hour of the current reference day
+        const newTime = addHours(dayStart, hour);
 
         setCurrentTime(newTime);
     };
